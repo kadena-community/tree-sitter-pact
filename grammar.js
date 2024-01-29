@@ -168,7 +168,11 @@ module.exports = grammar({
 
     // special forms
     // <string> or @doc <string>
-    doc: ($) => choice(seq("@doc", $.string), $.string),
+    doc: ($) =>
+      choice(
+        seq("@doc", alias($.string, $.doc_string)),
+        alias($.string, $.doc_string)
+      ),
     model: ($) =>
       seq("@model", "[", repeat(choice($.defproperty, $.s_expression)), "]"),
     defproperty: ($) =>

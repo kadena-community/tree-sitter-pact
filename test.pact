@@ -1,8 +1,8 @@
 (module coin GOVERNANCE
- (defun ss () 
-  {
-    "name": 1,
-   "age": 2
-  }
- )
+ (use coin [dd,dd])
+  (defun sss (t:string s2:object{ss})
+  {"s": 1}
+  )
+
+
 )

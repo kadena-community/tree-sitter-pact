@@ -950,7 +950,7 @@
       "required": true,
       "types": [
         {
-          "type": "string",
+          "type": "doc_string",
           "named": true
         }
       ]
@@ -2173,11 +2173,11 @@
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "def_identifier",
@@ -2210,6 +2210,10 @@
   {
     "type": "defun",
     "named": false
+  },
+  {
+    "type": "doc_string",
+    "named": true
   },
   {
     "type": "guard",

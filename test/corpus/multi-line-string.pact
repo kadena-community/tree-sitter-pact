@@ -15,4 +15,4 @@ Multi-line string
   (module
     name: (module_identifier)
     governance: (module_governance)
-    doc: (doc (string))))
+    doc: (doc (doc_string))))

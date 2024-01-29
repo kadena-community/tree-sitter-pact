@@ -40,7 +40,7 @@ defcap
                 (type_annotation
                     (type_identifier))))
         (doc
-        (string))
+        (doc_string))
         (managed)
         (boolean))))
 
