@@ -3,10 +3,7 @@ const PARENS_LEFT = "(";
 const PARENS_RIGHT = ")";
 const ATOM = token(/[a-zA-Z%#+\-_&$@<>=?*!|/][a-zA-Z0-9%#+\-_&$@<>=?*!|/]*/);
 
-const WHITESPACE_CHAR =
-  /[\f\n\r\t ,\u000B\u001C\u001D\u001E\u001F\u2028\u2029\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2008\u2009\u200A\u205F\u3000]/;
-
-const WHITESPACE = token(repeat1(WHITESPACE_CHAR));
+const WHITESPACE = /[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]/;
 // comments start with a semicolon and end with a newline
 //
 const COMMENT = token(seq(";", /.*/));
@@ -20,18 +17,18 @@ const STRING = token(
       choice(
         /[^"\\]+/, // Match any character except double quote or backslash
         /\\./, // Match escaped characters (e.g., \n, \", \\)
-        /\\\n[\s\S]*/, // Match backslash followed by newline and then any character, including newlines
-      ),
+        /\\\n[\s\S]*/ // Match backslash followed by newline and then any character, including newlines
+      )
     ),
-    '"', // Ending double quote
-  ),
+    '"' // Ending double quote
+  )
 );
 
 const SYMBOL = token(
   seq(
     "'", // Starting with an apostrophe
-    /[^\s\t\n\r,:."'\[\]()]+/, // Continuing with characters that are not whitespace or specified punctuation
-  ),
+    /[^\s\t\n\r,:."'\[\]()]+/ // Continuing with characters that are not whitespace or specified punctuation
+  )
 );
 
 const PREC = {
@@ -40,115 +37,151 @@ const PREC = {
   LITERAL: 15,
 };
 
+/**
+ * Creates a rule to match one or more of the rules separated by a comma
+ * @param {Rule} rule
+ * @return {SeqRule}
+ */
+function commaSep1(rule) {
+  return seq(rule, repeat(seq(",", rule)));
+}
+
+/**
+ * Creates a rule to optionally match one or more of the rules separated by a comma
+ * @param {Rule} rule
+ * @return {ChoiceRule}
+ */
+function commaSep(rule) {
+  return optional(commaSep1(rule));
+}
+
+function listOf(rule) {
+  return choice(seq("[", repeat(rule), "]"), seq("[", commaSep(rule), "]"));
+}
+
+function withParens(rules) {
+  const r = Array.isArray(rules) ? rules : [rules];
+  return seq(PARENS_LEFT, ...r, PARENS_RIGHT);
+}
+
 module.exports = grammar({
   name: "pact",
-  extras: ($) => [$._ws, $.comment],
-  conflicts: ($) => [
-    [$._literal, $.doc],
-    [$._from, $.s_expression],
-  ],
+  extras: ($) => [$.comment, WHITESPACE],
+  conflicts: ($) => [[$._literal, $.doc], [$._from, $.s_expression], [$.list]],
+  // supertypes: ($) => [$.s_expression],
   word: ($) => $.atom,
   rules: {
     source_file: ($) =>
       repeat(choice($.namespace, $.s_expression, $.use, $.module, $.interface)),
-    _ws: ($) => WHITESPACE,
     comment: ($) => COMMENT,
 
     // literals
-    integer_literal: ($) => INTEGER,
-    decimal_literal: ($) => DECIMAL,
-    string_literal: ($) => STRING,
-    boolean_literal: ($) => BOOLEAN,
-    symbol_literal: ($) => SYMBOL,
-    list_literal: ($) => seq("[", repeat($._from), "]"),
-    object_literal: ($) => seq("{", repeat(choice($.key_value_pair)), "}"),
+    integer: ($) => INTEGER,
+    decimal: ($) => DECIMAL,
+    string: ($) => STRING,
+    boolean: ($) => BOOLEAN,
+    symbol: ($) => SYMBOL,
+    list: ($) => listOf($._from),
+    object: ($) => seq("{", commaSep(choice($.pair, $.bind_pair)), "}"),
     _literal: ($) =>
       prec(
         PREC.LITERAL,
         choice(
-          $.boolean_literal,
-          $.integer_literal,
-          $.decimal_literal,
-          $.string_literal,
-          $.list_literal,
-          $.object_literal,
-          $.symbol_literal,
+          $.boolean,
+          $.integer,
+          $.decimal,
+          $.string,
+          $.list,
+          $.object,
+          $.symbol,
           $.atom,
-        ),
+          $.reference
+        )
       ),
     _from: ($) => choice($._literal, $.let_binding, $.cond, $.s_expression),
     s_expression: ($) =>
-      seq(
-        PARENS_LEFT,
-        field("head", $.atom),
-        optional(field("tail", repeat($._from))),
-        PARENS_RIGHT,
+      withParens(
+        seq(
+          field("head", alias($.reference, $.s_expression_head)),
+          optional(field("tail", repeat($._from)))
+        )
       ),
     atom: ($) => ATOM,
-    // delimiter: ($) => choice(".", ",", ":", "::"),
-
-    // helpers
+    reference: ($) => prec(20, seq($.atom, repeat(seq(".", $.atom)))),
+    // _delimiter: ($) => choice(".", ",", ":", "::"),
     type_identifier: ($) =>
-      choice(
-        "integer",
-        "decimal",
-        "time",
-        "bool",
-        "string",
-        "list",
-        "value",
-        "keyset",
-        "guard",
-        seq(
-          optional(choice("object", "table")),
-          "{",
-          field("type_param", $.atom),
-          "}",
-        ),
-        "object",
-        "table",
-      ),
-    arg_list: ($) => seq(PARENS_LEFT, optional(repeat($.arg)), PARENS_RIGHT),
-    arg: ($) =>
       prec.left(
-        1,
-        seq(
-          field("name", $.atom),
-          optional(seq(":", field("type", $.type_identifier))),
-        ),
+        20,
+        choice(
+          "integer",
+          "decimal",
+          "time",
+          "bool",
+          "string",
+          "list",
+          "value",
+          "keyset",
+          "guard",
+          prec(
+            40,
+            seq(
+              optional(choice("object", "table")),
+              "{",
+              field("type_param", $.reference),
+              "}"
+            )
+          ),
+          "object",
+          "table"
+        )
       ),
-    key_value_pair: ($) =>
+    type_annotation: ($) => seq(":", field("type", $.type_identifier)),
+    parameter_list: ($) => withParens(optional(repeat($.parameter))),
+    parameter: ($) =>
       seq(
-        field("key", choice($.string_literal, $.symbol_literal)),
-        choice(":=", ":"),
-        field("value", $._from),
+        field("name", alias($.atom, $.parameter_identifier)),
+        optional($.type_annotation)
       ),
+    schema_field: ($) =>
+      seq(
+        field("name", alias($.atom, $.schema_field_identifier)),
+        optional($.type_annotation)
+      ),
+    pair: ($) =>
+      seq(field("key", $._property_name), ":", field("value", $._from)),
+    bind_pair: ($) =>
+      seq(field("key", $._property_name), ":=", field("value", $._from)),
+
+    _property_name: ($) =>
+      alias(choice($.string, $.symbol), $.property_identifier),
+    _def_name: ($) => alias($.atom, $.def_identifier),
     _doc_or_meta: ($) =>
       repeat1(
         choice(
           field("model", $.model),
           field("doc", $.doc),
           field("managed", $.managed),
-          field("meta", $.meta),
-        ),
+          field("event", $.event),
+          field("meta", $.meta)
+        )
       ),
 
     // special forms
     // <string> or @doc <string>
-    doc: ($) => choice(seq("@doc", $.string_literal), $.string_literal),
+    doc: ($) => choice(seq("@doc", $.string), $.string),
     model: ($) =>
-      seq("@model", "[", repeat(choice($.defproperty, $._from)), "]"),
+      seq("@model", "[", repeat(choice($.defproperty, $.s_expression)), "]"),
     defproperty: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
-          "defproperty",
-          field("name", $.atom),
-          optional(field("args", $.arg_list)),
-          field("body", repeat($._from)),
-          PARENS_RIGHT,
-        ),
+        withParens(
+          seq(
+            "defproperty",
+            field("name", $._def_name),
+            optional(field("parameters", $.parameter_list)),
+            field("body", repeat($._from))
+          )
+        )
       ),
     managed: ($) =>
       prec.left(
@@ -156,25 +189,25 @@ module.exports = grammar({
         seq(
           "@managed",
           field("args", optional($._literal)),
-          field("manager", optional($.atom)),
-        ),
+          field("manager", optional($.atom))
+        )
       ),
+    event: ($) => seq("@event", $.boolean),
     // any other meta starts with @
     meta: ($) => prec.left(1, seq("@", $.atom)),
-
     namespace: ($) =>
       seq(
         PARENS_LEFT,
         "namespace",
-        field("namespace", choice($.string_literal, $.symbol_literal)),
-        PARENS_RIGHT,
+        field("namespace", choice($.string, $.symbol)),
+        PARENS_RIGHT
       ),
 
     // @model  <sexpr>
     // model: ($) => seq("@model", $._from),
     // (bless HASH)
     bless: ($) =>
-      seq(PARENS_LEFT, "bless", field("hash", $.string_literal), PARENS_RIGHT),
+      seq(PARENS_LEFT, "bless", field("hash", $.string), PARENS_RIGHT),
 
     //(defun NAME ARGLIST [DOC-OR-META] BODY...)
     defun: ($) =>
@@ -184,14 +217,14 @@ module.exports = grammar({
           PARENS_LEFT,
           "defun",
           seq(
-            field("name", $.atom),
-            optional(seq(":", field("return_type", $.type_identifier))),
+            field("name", $._def_name),
+            optional(seq(":", field("return_type", $.type_identifier)))
           ),
-          field("args", $.arg_list),
+          field("parameters", $.parameter_list),
           optional($._doc_or_meta),
           field("body", repeat($._from)),
-          PARENS_RIGHT,
-        ),
+          PARENS_RIGHT
+        )
       ),
     // (defcap NAME ARGLIST [DOC] BODY...)
     defcap: ($) =>
@@ -201,14 +234,14 @@ module.exports = grammar({
           PARENS_LEFT,
           "defcap",
           seq(
-            field("name", $.atom),
-            optional(seq(":", field("return_type", $.type_identifier))),
+            field("name", $._def_name),
+            optional(seq(":", field("return_type", $.type_identifier)))
           ),
-          field("args", $.arg_list),
+          field("parameters", $.parameter_list),
           optional($._doc_or_meta),
           field("body", repeat($._from)),
-          PARENS_RIGHT,
-        ),
+          PARENS_RIGHT
+        )
       ),
     // (defconst NAME VALUE [DOC-OR-META])
     defconst: ($) =>
@@ -217,11 +250,11 @@ module.exports = grammar({
         seq(
           PARENS_LEFT,
           "defconst",
-          field("name", $.atom),
+          field("name", $._def_name),
           field("value", $._from),
           optional($._doc_or_meta),
-          PARENS_RIGHT,
-        ),
+          PARENS_RIGHT
+        )
       ),
     // (defpact NAME ARGLIST [DOC-OR-META] STEPS...)
     defpact: ($) =>
@@ -231,14 +264,14 @@ module.exports = grammar({
           PARENS_LEFT,
           "defpact",
           seq(
-            field("name", $.atom),
-            optional(seq(":", field("return_type", $.type_identifier))),
+            field("name", $._def_name),
+            optional(seq(":", field("return_type", $.type_identifier)))
           ),
-          field("args", $.arg_list),
+          field("parameters", $.parameter_list),
           optional($._doc_or_meta),
           field("steps", repeat(choice($.step, $.step_with_rollback))),
-          PARENS_RIGHT,
-        ),
+          PARENS_RIGHT
+        )
       ),
     // (defschema NAME [DOC-OR-META] FIELDS...)
     defschema: ($) =>
@@ -247,11 +280,11 @@ module.exports = grammar({
         seq(
           PARENS_LEFT,
           "defschema",
-          field("name", $.atom),
+          field("name", $._def_name),
           optional($._doc_or_meta),
-          field("fields", repeat($.arg)),
-          PARENS_RIGHT,
-        ),
+          field("fields", repeat($.schema_field)),
+          PARENS_RIGHT
+        )
       ),
     // (deftable NAME[:SCHEMA] [DOC-OR-META])
     deftable: ($) =>
@@ -260,20 +293,30 @@ module.exports = grammar({
         seq(
           PARENS_LEFT,
           "deftable",
-          seq(field("name", $.atom), ":", "{", field("schema", $.atom), "}"),
+          seq(
+            field("name", $._def_name),
+            ":",
+            "{",
+            field("schema", $.atom),
+            "}"
+          ),
           optional($._doc_or_meta),
-          PARENS_RIGHT,
-        ),
+          PARENS_RIGHT
+        )
+      ),
+    let_variable: ($) =>
+      seq(
+        field("name", alias($.atom, $.let_variable_identifier)),
+        optional($.type_annotation)
       ),
     let_bind_pair: ($) =>
       seq(
         PARENS_LEFT,
-        field("key", $.atom),
+        field("variable", $.let_variable),
         field("value", $._from),
-        PARENS_RIGHT,
+        PARENS_RIGHT
       ),
-    _let_bind_pairs: ($) =>
-      seq(PARENS_LEFT, repeat($.let_bind_pair), PARENS_RIGHT),
+
     // (let (BINDPAIR [BINDPAIR [...]]) BODY)
     // (let* (BINDPAIR [BINDPAIR [...]]) BODY)
     let_binding: ($) =>
@@ -282,10 +325,13 @@ module.exports = grammar({
         seq(
           PARENS_LEFT,
           choice("let", "let*"),
-          field("bind_pairs", $._let_bind_pairs),
-          field("body", $._from),
-          PARENS_RIGHT,
-        ),
+          field(
+            "bind_pairs",
+            seq(PARENS_LEFT, repeat($.let_bind_pair), PARENS_RIGHT)
+          ),
+          field("body", repeat($._from)),
+          PARENS_RIGHT
+        )
       ),
     // (cond (TEST BRANCH) [(TEST2 BRANCH2) [...]] ELSE-BRANCH)
     cond: ($) =>
@@ -299,12 +345,12 @@ module.exports = grammar({
               PARENS_LEFT,
               field("test", $.s_expression),
               field("branch", $._from),
-              PARENS_RIGHT,
-            ),
+              PARENS_RIGHT
+            )
           ),
           field("else_branch", $._from),
-          PARENS_RIGHT,
-        ),
+          PARENS_RIGHT
+        )
       ),
     // (step EXPR)
     // (step ENTITY EXPR)
@@ -316,8 +362,8 @@ module.exports = grammar({
           "step",
           field("entity", optional($.atom)),
           field("expr", $._from),
-          PARENS_RIGHT,
-        ),
+          PARENS_RIGHT
+        )
       ),
     // (step-with-rollback EXPR ROLLBACK-EXPR)
     // (step-with-rollback ENTITY EXPR ROLLBACK-EXPR)
@@ -330,8 +376,8 @@ module.exports = grammar({
           field("entity", optional($.atom)),
           field("expr", $._from),
           field("rollback_expr", $._from),
-          PARENS_RIGHT,
-        ),
+          PARENS_RIGHT
+        )
       ),
     // (use MODULE)
     // (use MODULE HASH)
@@ -340,21 +386,18 @@ module.exports = grammar({
     use: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
-          "use",
-          field("module", $.atom),
-          optional(
-            choice(
-              seq(
-                field("hash", $.string_literal),
-                field("imports", choice($.string_literal, $.atom)),
-              ),
-              field("imports", choice($.string_literal, $.atom)),
-            ),
-          ),
-          PARENS_RIGHT,
-        ),
+        withParens(
+          seq(
+            "use",
+            field("module", $.reference),
+            optional(
+              choice(
+                seq(field("hash", $.string), field("imports", $.list)),
+                field("imports", $.list)
+              )
+            )
+          )
+        )
       ),
     // (interface NAME [DOR-OR-META] BODY...)
     interface: ($) =>
@@ -363,7 +406,7 @@ module.exports = grammar({
         seq(
           PARENS_LEFT,
           "interface",
-          field("name", $.atom),
+          field("name", $._def_name),
           optional($._doc_or_meta),
           field(
             "body",
@@ -374,12 +417,12 @@ module.exports = grammar({
                 $.defschema,
                 $.defpact,
                 $.defcap,
-                $.use,
-              ),
-            ),
+                $.use
+              )
+            )
           ),
-          PARENS_RIGHT,
-        ),
+          PARENS_RIGHT
+        )
       ),
     // (module NAME KEYSET-OR-GOVERNANCE [DOC-OR-META] BODY...)
     module: ($) =>
@@ -388,10 +431,10 @@ module.exports = grammar({
         seq(
           PARENS_LEFT,
           "module",
-          field("name", $.atom),
+          field("name", alias($.atom, $.module_identifier)),
           field(
             "governance",
-            choice($.atom, $.string_literal, $.symbol_literal),
+            alias(choice($.atom, $.string, $.symbol), $.module_governance)
           ),
           optional($._doc_or_meta),
           field(
@@ -406,23 +449,18 @@ module.exports = grammar({
                 $.defschema,
                 $.defpact,
                 $.defcap,
-                $.deftable,
-              ),
-            ),
+                $.deftable
+              )
+            )
           ),
-          PARENS_RIGHT,
-        ),
+          PARENS_RIGHT
+        )
       ),
     // (implements INTERFACE)
     implements: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
-          "implements",
-          field("interface", $.atom),
-          PARENS_RIGHT,
-        ),
+        seq(PARENS_LEFT, "implements", field("interface", $.atom), PARENS_RIGHT)
       ),
   },
 });

@@ -16,36 +16,47 @@
 
 ---
 (source_file
-    (module
-    (atom)
-    (atom)
+  (module
+    (module_identifier)
+    (module_governance)
     (model
-        (defproperty
-        (atom)
+      (defproperty
+        (def_identifier)
         (s_expression
-            (atom)
-            (s_expression
-            (atom)
-            (atom)
-            (symbol_literal))
-            (decimal_literal)))
-        (defproperty
-        (atom)
-        (arg_list
-            (arg
-            (atom)
-            (type_identifier)))
+          (s_expression_head
+            (atom))
+          (s_expression
+            (s_expression_head
+              (atom))
+            (reference
+              (atom))
+            (symbol))
+          (decimal)))
+      (defproperty
+        (def_identifier)
+        (parameter_list
+          (parameter
+            (parameter_identifier)
+            (type_annotation
+              (type_identifier))))
         (s_expression
-            (atom)
+          (s_expression_head
+            (atom))
+          (s_expression
+            (s_expression_head
+              (atom))
             (s_expression
-            (atom)
-            (s_expression
-                (atom)
+              (s_expression_head
                 (atom))
-            (integer_literal))
+              (reference
+                (atom)))
+            (integer))
+          (s_expression
+            (s_expression_head
+              (atom))
             (s_expression
-            (atom)
-            (s_expression
-                (atom)
+              (s_expression_head
                 (atom))
-            (integer_literal)))))))
+              (reference
+                (atom)))
+            (integer)))))))

@@ -8,9 +8,9 @@ Module
 ---
 (source_file
     (module
-        (atom)
-        (atom)
+        (module_identifier)
+        (module_governance)
         (defcap
-            (atom)
-            (arg_list)
-            (boolean_literal))))
+            (def_identifier)
+            (parameter_list)
+            (boolean))))

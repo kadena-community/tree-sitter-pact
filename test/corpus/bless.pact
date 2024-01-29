@@ -10,11 +10,11 @@ bless
 ---
 (source_file
     (module
-    (atom)
-    (atom)
+        (module_identifier)
+        (module_governance)
     (bless
-        (string_literal))
+        (string))
     (bless
-        (string_literal))
+        (string))
     (bless
-        (string_literal))))
+        (string))))

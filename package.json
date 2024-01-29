@@ -6,10 +6,16 @@
   "scripts": {
     "generate": "tree-sitter generate",
     "test": "tree-sitter test",
+    "build:wasm": "tree-sitter build-wasm",
+    "playground": "tree-sitter build-wasm && tree-sitter playground playground.pact",
     "parse:test": "tree-sitter parse test.pact",
     "parse:coin": "tree-sitter parse coin.pact"
   },
-  "keywords": ["tree-sitter", "pact", "kadena"],
+  "keywords": [
+    "tree-sitter",
+    "pact",
+    "kadena"
+  ],
   "author": "Salama Ashoush <salamaashoush@gmail.com>",
   "license": "ISC",
   "dependencies": {
@@ -21,8 +27,14 @@
   "tree-sitter": [
     {
       "scope": "source.pact",
-      "file-types": ["pact", "repl"],
-      "highlights": ["queries/highlights.scm", "queries/locals.scm"],
+      "file-types": [
+        "pact",
+        "repl"
+      ],
+      "highlights": [
+        "queries/highlights.scm",
+        "queries/locals.scm"
+      ],
       "injection-regex": "^(pact|repl)$"
     }
   ]

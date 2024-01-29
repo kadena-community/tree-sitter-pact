@@ -15,32 +15,34 @@ defcap
 ---
 (source_file
     (module
-    (atom)
-    (atom)
+    (module_identifier)
+    (module_governance)
     (defcap
-        (atom)
-        (arg_list
-        (arg
-            (atom)
-            (type_identifier)))
-        (string_literal)
+        (def_identifier)
+        (parameter_list
+        (parameter
+            (parameter_identifier)
+            (type_annotation
+                (type_identifier))))
+        (string)
         (s_expression
-        (atom)
+            (s_expression_head (atom))
         (s_expression
-            (atom)
-            (atom)
-            (string_literal))
-        (string_literal)))
+            (s_expression_head (atom))
+            (reference (atom))
+            (string))
+        (string)))
     (defcap
-        (atom)
-        (arg_list
-        (arg
-            (atom)
-            (type_identifier)))
+        (def_identifier)
+        (parameter_list
+            (parameter
+                (parameter_identifier)
+                (type_annotation
+                    (type_identifier))))
         (doc
-        (string_literal))
+        (string))
         (managed)
-        (boolean_literal))))
+        (boolean))))
 
 ==================
 complex
@@ -66,15 +68,15 @@ complex
     (defcap
         (atom)
         (type_identifier)
-        (arg_list
-        (arg
-            (atom)
+        (parameter_list
+        (parameter
+            (parameter_identifier)
             (type_identifier))
-        (arg
-            (atom)
+        (parameter
+            (parameter_identifier)
             (type_identifier))
-        (arg
-            (atom)
+        (parameter
+            (parameter_identifier)
             (type_identifier)))
         (managed
         (atom)
@@ -85,7 +87,7 @@ complex
             (atom)
             (atom)
             (atom))
-        (string_literal))
+        (string))
         (s_expression
         (atom)
         (atom))
@@ -94,8 +96,8 @@ complex
         (s_expression
             (atom)
             (atom)
-            (decimal_literal))
-        (string_literal))
+            (decimal))
+        (string))
         (s_expression
         (atom)
         (s_expression

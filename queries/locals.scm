@@ -3,26 +3,30 @@
 
 (let_binding) @local.scope
 
+(module
+  name:  (module_identifier) @local.scope
+  (#set! scope.type "module"))
+
 (defun
-  name: (atom) @local.definition.function
+  name: (def_identifier) @local.definition.function
   (#set! definition.function.scope "parent"))
 (defpact
-  name: (atom) @local.definition.function
-  (#set! definition.pact.scope "parent"))
+  name: (def_identifier) @local.definition.function
+  (#set! definition.function.scope "parent"))
 (defcap
-    name: (atom) @local.definition.function
-    (#set! definition.cap.scope "parent"))
+  name: (def_identifier) @local.definition.function
+  (#set! definition.function.scope "parent"))
 
-(use imports: (atom) @local.definition.import)
+(use imports: (list (reference) @local.definition.import))
 
 ; Definitions
 ;------------
 
-(arg_list (arg name: (atom) @local.definition.parameter))
-(arg_list (arg type: (type_identifier) @local.definition.type))
+(parameter_list (parameter name: (parameter_identifier) @local.definition.parameter))
+(parameter_list (parameter (type_annotation (type_identifier) @local.definition.type)))
 
-(let_binding (let_bind_pair key: (atom) @local.definition.parameter))
+(let_binding (let_bind_pair (let_variable (let_variable_identifier) @local.definition.parameter)))
 
 ; References
 ;------------
-;(s_expression head: (atom) @local.reference)
+;(s_expression (s_expression_head) @local.reference)

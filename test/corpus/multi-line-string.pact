@@ -13,6 +13,6 @@ Multi-line string
 ---
 (source_file
   (module
-    name: (atom)
-    governance: (atom)
-    doc: (doc (string_literal))))
+    name: (module_identifier)
+    governance: (module_governance)
+    doc: (doc (string))))
