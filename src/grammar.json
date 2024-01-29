@@ -623,7 +623,7 @@
         }
       ]
     },
-    "schema_field": {
+    "schema_property": {
       "type": "SEQ",
       "members": [
         {
@@ -636,7 +636,7 @@
               "name": "atom"
             },
             "named": true,
-            "value": "schema_field_identifier"
+            "value": "schema_property_identifier"
           }
         },
         {
@@ -737,18 +737,18 @@
         "members": [
           {
             "type": "FIELD",
-            "name": "model",
-            "content": {
-              "type": "SYMBOL",
-              "name": "model"
-            }
-          },
-          {
-            "type": "FIELD",
             "name": "doc",
             "content": {
               "type": "SYMBOL",
               "name": "doc"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "model",
+            "content": {
+              "type": "SYMBOL",
+              "name": "model"
             }
           },
           {
@@ -1242,7 +1242,7 @@
           },
           {
             "type": "FIELD",
-            "name": "value",
+            "name": "body",
             "content": {
               "type": "SYMBOL",
               "name": "_from"
@@ -1402,12 +1402,12 @@
           },
           {
             "type": "FIELD",
-            "name": "fields",
+            "name": "properties",
             "content": {
               "type": "REPEAT",
               "content": {
                 "type": "SYMBOL",
-                "name": "schema_field"
+                "name": "schema_property"
               }
             }
           },
@@ -1522,12 +1522,8 @@
           "value": "("
         },
         {
-          "type": "FIELD",
-          "name": "variable",
-          "content": {
-            "type": "SYMBOL",
-            "name": "let_variable"
-          }
+          "type": "SYMBOL",
+          "name": "let_variable"
         },
         {
           "type": "FIELD",
@@ -1568,7 +1564,7 @@
           },
           {
             "type": "FIELD",
-            "name": "bind_pairs",
+            "name": "bind_pair",
             "content": {
               "type": "SEQ",
               "members": [

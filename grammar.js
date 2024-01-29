@@ -142,9 +142,9 @@ module.exports = grammar({
         field("name", alias($.atom, $.parameter_identifier)),
         optional($.type_annotation)
       ),
-    schema_field: ($) =>
+    schema_property: ($) =>
       seq(
-        field("name", alias($.atom, $.schema_field_identifier)),
+        field("name", alias($.atom, $.schema_property_identifier)),
         optional($.type_annotation)
       ),
     pair: ($) =>
@@ -158,8 +158,8 @@ module.exports = grammar({
     _doc_or_meta: ($) =>
       repeat1(
         choice(
-          field("model", $.model),
           field("doc", $.doc),
+          field("model", $.model),
           field("managed", $.managed),
           field("event", $.event),
           field("meta", $.meta)
@@ -255,7 +255,7 @@ module.exports = grammar({
           PARENS_LEFT,
           "defconst",
           field("name", $._def_name),
-          field("value", $._from),
+          field("body", $._from),
           optional($._doc_or_meta),
           PARENS_RIGHT
         )
@@ -286,7 +286,7 @@ module.exports = grammar({
           "defschema",
           field("name", $._def_name),
           optional($._doc_or_meta),
-          field("fields", repeat($.schema_field)),
+          field("properties", repeat($.schema_property)),
           PARENS_RIGHT
         )
       ),
@@ -314,12 +314,7 @@ module.exports = grammar({
         optional($.type_annotation)
       ),
     let_bind_pair: ($) =>
-      seq(
-        PARENS_LEFT,
-        field("variable", $.let_variable),
-        field("value", $._from),
-        PARENS_RIGHT
-      ),
+      seq(PARENS_LEFT, $.let_variable, field("value", $._from), PARENS_RIGHT),
 
     // (let (BINDPAIR [BINDPAIR [...]]) BODY)
     // (let* (BINDPAIR [BINDPAIR [...]]) BODY)
@@ -330,7 +325,7 @@ module.exports = grammar({
           PARENS_LEFT,
           choice("let", "let*"),
           field(
-            "bind_pairs",
+            "bind_pair",
             seq(PARENS_LEFT, repeat($.let_bind_pair), PARENS_RIGHT)
           ),
           field("body", repeat($._from)),

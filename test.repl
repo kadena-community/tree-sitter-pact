@@ -1,9 +1,8 @@
-(namespace "free")
 (module hello G
 (defcap G() true)
- (defun test(name.fff,age)
-  (format "hello {}, {} " [name age])
+ (defun test(name age)
+    "doc hello world"
  )
 )
 
-(hello.test "zhangsan" 18)
+(print (hello.test s 18))

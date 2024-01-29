@@ -58,10 +58,10 @@
   "bless"
   "interface"
   "implements"
+  "deftable"
 ] @keyword
 
 "use" @keyword.import
-"deftable" @keyword.storage
 
 [
   "step"
@@ -97,6 +97,11 @@
  ;"::"
 ;] @punctuation.delimiter
 
+(type_annotation  ":" @punctuation.delimiter)
+(pair ":" @punctuation.delimiter)
+(list "," @punctuation.delimiter)
+(reference "." @punctuation.delimiter) 
+
 [
   "("
   ")"
@@ -117,13 +122,8 @@
     (atom)
  ] @constant
  (#match? @constant "^[A-Z_][A-Z\\d_]+$"))
-;(atom) @variable
 
 
-; [
-;   "true"
-;   "false"
-; ] @constant.builtin
 
 (comment) @comment
 (type_identifier) @type.builtin
@@ -131,14 +131,17 @@
 (decimal) @number.float
 (string) @string
 (boolean) @boolean
-(object) @object
-(list) @array
 (symbol) @string.special.symbol
 (property_identifier) @property
+(schema_property (schema_property_identifier) @property)
 (doc_string) @string.documentation
 (type_identifier (reference)) @type
+(module_identifier) @module
+(module_governance) @constant
 
 (use module: (reference) @module)
+
+
 (defpact name: (def_identifier) @function.method )
 (defun name: (def_identifier) @function.method )
 (defcap name: (def_identifier) @function.method )
@@ -146,5 +149,11 @@
 (defschema name: (def_identifier) @type.definition)
 
 (parameter_identifier) @variable.parameter
-(let_binding (let_bind_pair (let_variable (let_variable_identifier) @variable)))
-(reference) @variable.member
+(let_variable_identifier) @variable
+(reference) @variable.reference
+
+(s_expression_head (atom) @module (atom) @variable.member)
+(s_expression_head (atom) @function)
+(s_expression tail: (reference (atom) @module (atom) @variable.member))
+
+;(s_expression tail: (reference (atom) @variable))

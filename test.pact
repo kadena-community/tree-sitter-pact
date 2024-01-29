@@ -1,8 +1,13 @@
-(module coin GOVERNANCE
- (use coin [dd,dd])
-  (defun sss (t:string s2:object{ss})
-  {"s": 1}
-  )
+(module coin G
+  (use coin)
+  (defschema test
+   test:string
+   )
 
-
+ (defun test(s:string e)
+  {
+    "test": s
+  }
+ )
 )
+
