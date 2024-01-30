@@ -127,7 +127,7 @@ module.exports = grammar({
             seq(
               optional(choice("object", "table")),
               "{",
-              field("type_param", $.reference),
+              field("type_parameter", alias($.reference, $.type_parameter)),
               "}"
             )
           ),
@@ -174,7 +174,12 @@ module.exports = grammar({
         alias($.string, $.doc_string)
       ),
     model: ($) =>
-      seq("@model", "[", repeat(choice($.defproperty, $.s_expression)), "]"),
+      seq(
+        "@model",
+        "[",
+        field("body", repeat(choice($.defproperty, $.s_expression))),
+        "]"
+      ),
     defproperty: ($) =>
       prec(
         PREC.SPECIAL_FORM,
@@ -301,7 +306,7 @@ module.exports = grammar({
             field("name", $._def_name),
             ":",
             "{",
-            field("schema", $.atom),
+            field("schema", alias($.atom, $.table_schema)),
             "}"
           ),
           optional($._doc_or_meta),

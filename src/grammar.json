@@ -524,10 +524,15 @@
                 },
                 {
                   "type": "FIELD",
-                  "name": "type_param",
+                  "name": "type_parameter",
                   "content": {
-                    "type": "SYMBOL",
-                    "name": "reference"
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "reference"
+                    },
+                    "named": true,
+                    "value": "type_parameter"
                   }
                 },
                 {
@@ -822,19 +827,23 @@
           "value": "["
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "body",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "defproperty"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "s_expression"
-              }
-            ]
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "defproperty"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "s_expression"
+                }
+              ]
+            }
           }
         },
         {
@@ -1038,6 +1047,22 @@
         }
       ]
     },
+    "def_block": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_doc_or_meta"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_from"
+          }
+        }
+      ]
+    },
     "defun": {
       "type": "PREC",
       "value": 10,
@@ -1099,26 +1124,10 @@
             }
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_doc_or_meta"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "FIELD",
-            "name": "body",
+            "type": "REPEAT",
             "content": {
-              "type": "REPEAT",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_from"
-              }
+              "type": "SYMBOL",
+              "name": "def_block"
             }
           },
           {
@@ -1455,8 +1464,13 @@
                 "type": "FIELD",
                 "name": "schema",
                 "content": {
-                  "type": "SYMBOL",
-                  "name": "atom"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "atom"
+                  },
+                  "named": true,
+                  "value": "table_schema"
                 }
               },
               {

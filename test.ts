@@ -12,5 +12,4 @@ function test(test: Test): void {
 
 document.body.innerHTML = test({ test: "test" });
 
-pact`(coin.transfer "k:asdasdasdasd" [100])
-
+pact`(coin.transfer "k:asdasdasdasd" [100])`;

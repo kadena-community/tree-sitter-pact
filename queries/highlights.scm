@@ -112,15 +112,16 @@
 
 (comment) @comment
 (type_identifier) @type.builtin
+(type_identifier (type_parameter)? @type)
+(table_schema) @type
 (integer) @number
 (decimal) @number.float
 (string) @string
 (boolean) @boolean
 (symbol) @string.special.symbol
 (property_identifier) @property
-(schema_property (schema_property_identifier) @property)
+(schema_property_identifier) @property
 (doc_string) @string.documentation
-(type_identifier (reference)) @type
 (module_identifier) @module
 (module_governance) @function
 

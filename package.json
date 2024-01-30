@@ -9,7 +9,7 @@
     "test": "tree-sitter test",
     "build": "pnpm run generate && pnpm run build:node && pnpm run build:wasm",
     "build:wasm": "tree-sitter build-wasm",
-    "playground": "tree-sitter build-wasm --debug && tree-sitter playground",
+    "playground": "tree-sitter build-wasm && tree-sitter playground",
     "parse:test": "tree-sitter parse test.pact",
     "parse:coin": "tree-sitter parse coin.pact"
   },

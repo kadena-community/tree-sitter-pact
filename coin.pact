@@ -1,19 +1,19 @@
 (module coin GOVERNANCE
 
   @doc "'coin' represents the Kadena Coin Contract. This contract provides both the \
-  \buy/redeem gas support in the form of 'fund-tx', as well as transfer,       \
-  \credit, debit, coinbase, account creation and query, as well as SPV burn    \
-  \create. To access the coin contract, you may use its fully-qualified name,  \
-  \or issue the '(use coin)' command in the body of a module declaration."
+\buy/redeem gas support in the form of 'fund-tx', as well as transfer,       \
+\credit, debit, coinbase, account creation and query, as well as SPV burn    \
+\create. To access the coin contract, you may use its fully-qualified name,  \
+\or issue the '(use coin)' command in the body of a module declaration."
 
   @model
     [ (defproperty conserves-mass
-        (= (column-delta coin-table 'balance) 0.0))
+      (= (column-delta coin-table 'balance) 0.0))
 
-      (defproperty valid-account (account:string)
-        (and
-          (>= (length account) 3)
-          (<= (length account) 256)))
+    (defproperty valid-account (account:string)
+      (and
+        (>= (length account) 3)
+        (<= (length account) 256)))
     ]
 
   (implements fungible-v2)
@@ -80,65 +80,65 @@
     ( sender:string
       receiver:string
       amount:decimal
-    )
+      )
     @managed amount TRANSFER-mgr
     (enforce (!= sender receiver) "same sender and receiver")
     (enforce-unit amount)
     (enforce (> amount 0.0) "Positive amount")
     (compose-capability (DEBIT sender))
     (compose-capability (CREDIT receiver))
-  )
+    )
 
   (defun TRANSFER-mgr:decimal
     ( managed:decimal
       requested:decimal
-    )
+      )
 
     (let ((newbal (- managed requested)))
       (enforce (>= newbal 0.0)
         (format "TRANSFER exceeded for balance {}" [managed]))
       newbal)
-  )
+    )
 
   (defcap TRANSFER_XCHAIN:bool
     ( sender:string
       receiver:string
       amount:decimal
       target-chain:string
-    )
+      )
 
     @managed amount TRANSFER_XCHAIN-mgr
     (enforce-unit amount)
     (enforce (> amount 0.0) "Cross-chain transfers require a positive amount")
     (compose-capability (DEBIT sender))
-  )
+    )
 
   (defun TRANSFER_XCHAIN-mgr:decimal
     ( managed:decimal
       requested:decimal
-    )
+      )
 
     (enforce (>= managed requested)
       (format "TRANSFER_XCHAIN exceeded for balance {}" [managed]))
     0.0
-  )
+    )
 
   (defcap TRANSFER_XCHAIN_RECD:bool
-    ( sender:string
-      receiver:string
-      amount:decimal
-      source-chain:string
+  ( sender:string
+    receiver:string
+    amount:decimal
+    source-chain:string
     )
-    @event true
+  @event true
   )
 
   ; v3 capabilities
   (defcap RELEASE_ALLOCATION
-    ( account:string
-      amount:decimal
+  ( account:string
+    amount:decimal
     )
-    @doc "Event for allocation release, can be used for sig scoping."
-    @event true
+  @doc "Event for allocation release, can be used for sig scoping."
+  @event true
   )
 
   ; --------------------------------------------------------------------------
@@ -167,14 +167,14 @@
 
     (enforce
       (= (floor amount MINIMUM_PRECISION)
-         amount)
+        amount)
       (format "Amount violates minimum precision: {}" [amount]))
     )
 
   (defun validate-account (account:string)
     @doc "Enforce that an account name conforms to the coin contract \
-         \minimum and maximum length requirements, as well as the    \
-         \latin-1 character set."
+\minimum and maximum length requirements, as well as the    \
+\latin-1 character set."
 
     (enforce
       (is-charset COIN_CHARSET account)
@@ -196,7 +196,7 @@
           "Account name does not conform to the max length requirement: {}"
           [account]))
       )
-  )
+    )
 
   ; --------------------------------------------------------------------------
   ; Coin Contract
@@ -211,18 +211,18 @@
       "Enforce either the presence of a GAS cap or keyset"
       [ (gas-only)
         (enforce-guard guard)
-      ]))
+        ]))
 
   (defun buy-gas:string (sender:string total:decimal)
     @doc "This function describes the main 'gas buy' operation. At this point \
-    \MINER has been chosen from the pool, and will be validated. The SENDER   \
-    \of this transaction has specified a gas limit LIMIT (maximum gas) for    \
-    \the transaction, and the price is the spot price of gas at that time.    \
-    \The gas buy will be executed prior to executing SENDER's code."
+\MINER has been chosen from the pool, and will be validated. The SENDER   \
+\of this transaction has specified a gas limit LIMIT (maximum gas) for    \
+\the transaction, and the price is the spot price of gas at that time.    \
+\The gas buy will be executed prior to executing SENDER's code."
 
     @model [ (property (> total 0.0))
-             (property (valid-account sender))
-           ]
+      (property (valid-account sender))
+      ]
 
     (validate-account sender)
 
@@ -236,14 +236,14 @@
 
   (defun redeem-gas:string (miner:string miner-guard:guard sender:string total:decimal)
     @doc "This function describes the main 'redeem gas' operation. At this    \
-    \point, the SENDER's transaction has been executed, and the gas that      \
-    \was charged has been calculated. MINER will be credited the gas cost,    \
-    \and SENDER will receive the remainder up to the limit"
+\point, the SENDER's transaction has been executed, and the gas that      \
+\was charged has been calculated. MINER will be credited the gas cost,    \
+\and SENDER will receive the remainder up to the limit"
 
     @model [ (property (> total 0.0))
-             (property (valid-account sender))
-             (property (valid-account miner))
-           ]
+      (property (valid-account sender))
+      (property (valid-account miner))
+      ]
 
     (validate-account sender)
     (validate-account miner)
@@ -252,7 +252,7 @@
     (require-capability (GAS))
     (let*
       ((fee (read-decimal "fee"))
-       (refund (- total fee)))
+      (refund (- total fee)))
 
       (enforce-unit fee)
       (enforce (>= fee 0.0)
@@ -263,7 +263,7 @@
 
       (emit-event (TRANSFER sender miner fee)) ;v3
 
-        ; directly update instead of credit
+      ; directly update instead of credit
       (with-capability (CREDIT sender)
         (if (> refund 0.0)
           (with-read coin-table sender
@@ -289,8 +289,8 @@
 
     (insert coin-table account
       { "balance" : 0.0
-      , "guard"   : guard
-      })
+        , "guard"   : guard
+        })
     )
 
   (defun get-balance:decimal (account:string)
@@ -304,10 +304,10 @@
     ( account:string )
     (with-read coin-table account
       { "balance" := bal
-      , "guard" := g }
+        , "guard" := g }
       { "account" : account
-      , "balance" : bal
-      , "guard": g })
+        , "balance" : bal
+        , "guard": g })
     )
 
   (defun rotate:string (account:string new-guard:guard)
@@ -329,10 +329,10 @@
 
   (defun transfer:string (sender:string receiver:string amount:decimal)
     @model [ (property conserves-mass)
-             (property (> amount 0.0))
-             (property (valid-account sender))
-             (property (valid-account receiver))
-             (property (!= sender receiver)) ]
+      (property (> amount 0.0))
+      (property (valid-account sender))
+      (property (valid-account receiver))
+      (property (!= sender receiver)) ]
 
     (enforce (!= sender receiver)
       "sender cannot be the receiver of a transfer")
@@ -380,11 +380,11 @@
 
   (defun coinbase:string (account:string account-guard:guard amount:decimal)
     @doc "Internal function for the initial creation of coins.  This function \
-    \cannot be used outside of the coin contract."
+\cannot be used outside of the coin contract."
 
     @model [ (property (valid-account account))
-             (property (> amount 0.0))
-           ]
+      (property (> amount 0.0))
+      ]
 
     (validate-account account)
     (enforce-unit amount)
@@ -397,10 +397,10 @@
 
   (defun remediate:string (account:string amount:decimal)
     @doc "Allows for remediation transactions. This function \
-         \is protected by the REMEDIATE capability"
+\is protected by the REMEDIATE capability"
     @model [ (property (valid-account account))
-             (property (> amount 0.0))
-           ]
+      (property (> amount 0.0))
+      ]
 
     (validate-account account)
 
@@ -423,19 +423,19 @@
 
   (defpact fund-tx (sender:string miner:string miner-guard:guard total:decimal)
     @doc "'fund-tx' is a special pact to fund a transaction in two steps,     \
-    \with the actual transaction transpiring in the middle:                   \
-    \                                                                         \
-    \  1) A buying phase, debiting the sender for total gas and fee, yielding \
-    \     TX_MAX_CHARGE.                                                      \
-    \  2) A settlement phase, resuming TX_MAX_CHARGE, and allocating to the   \
-    \     coinbase account for used gas and fee, and sender account for bal-  \
-    \     ance (unused gas, if any)."
+\with the actual transaction transpiring in the middle:                   \
+\                                                                         \
+\  1) A buying phase, debiting the sender for total gas and fee, yielding \
+\     TX_MAX_CHARGE.                                                      \
+\  2) A settlement phase, resuming TX_MAX_CHARGE, and allocating to the   \
+\     coinbase account for used gas and fee, and sender account for bal-  \
+\     ance (unused gas, if any)."
 
     @model [ (property (> total 0.0))
-             (property (valid-account sender))
-             (property (valid-account miner))
-             ;(property conserves-mass) not supported yet
-           ]
+      (property (valid-account sender))
+      (property (valid-account miner))
+      ;(property conserves-mass) not supported yet
+      ]
 
     (step (buy-gas sender total))
     (step (redeem-gas miner miner-guard sender total))
@@ -445,8 +445,8 @@
     @doc "Debit AMOUNT from ACCOUNT balance"
 
     @model [ (property (> amount 0.0))
-             (property (valid-account account))
-           ]
+      (property (valid-account account))
+      ]
 
     (validate-account account)
 
@@ -471,8 +471,8 @@
     @doc "Credit AMOUNT to ACCOUNT balance"
 
     @model [ (property (> amount 0.0))
-             (property (valid-account account))
-           ]
+      (property (valid-account account))
+      ]
 
     (validate-account account)
 
@@ -488,20 +488,20 @@
         "account guards do not match")
 
       (let ((is-new
-             (if (= balance -1.0)
-                 (enforce-reserved account guard)
-               false)))
+        (if (= balance -1.0)
+          (enforce-reserved account guard)
+          false)))
 
         (write coin-table account
           { "balance" : (if is-new amount (+ balance amount))
-          , "guard"   : retg
-          }))
+            , "guard"   : retg
+            }))
       ))
 
   (defun check-reserved:string (account:string)
     " Checks ACCOUNT for reserved name and returns type if \
-    \ found or empty string. Reserved names start with a \
-    \ single char and colon, e.g. 'c:foo', which would return 'c' as type."
+\ found or empty string. Reserved names start with a \
+\ single char and colon, e.g. 'c:foo', which would return 'c' as type."
     (let ((pfx (take 2 account)))
       (if (= ":" (take -1 pfx)) (take 1 pfx) "")))
 
@@ -534,58 +534,58 @@
       amount:decimal )
 
     @model [ (property (> amount 0.0))
-             (property (valid-account sender))
-             (property (valid-account receiver))
-           ]
+      (property (valid-account sender))
+      (property (valid-account receiver))
+      ]
 
     (step
-      (with-capability
-        (TRANSFER_XCHAIN sender receiver amount target-chain)
+    (with-capability
+      (TRANSFER_XCHAIN sender receiver amount target-chain)
 
-        (validate-account sender)
-        (validate-account receiver)
+      (validate-account sender)
+      (validate-account receiver)
 
-        (enforce (!= "" target-chain) "empty target-chain")
-        (enforce (!= (at 'chain-id (chain-data)) target-chain)
-          "cannot run cross-chain transfers to the same chain")
+      (enforce (!= "" target-chain) "empty target-chain")
+      (enforce (!= (at 'chain-id (chain-data)) target-chain)
+        "cannot run cross-chain transfers to the same chain")
 
-        (enforce (> amount 0.0)
-          "transfer quantity must be positive")
+      (enforce (> amount 0.0)
+        "transfer quantity must be positive")
 
-        (enforce-unit amount)
+      (enforce-unit amount)
 
-        (enforce (contains target-chain VALID_CHAIN_IDS)
-          "target chain is not a valid chainweb chain id")
+      (enforce (contains target-chain VALID_CHAIN_IDS)
+        "target chain is not a valid chainweb chain id")
 
-        ;; step 1 - debit delete-account on current chain
-        (debit sender amount)
-        (emit-event (TRANSFER sender "" amount))
+      ;; step 1 - debit delete-account on current chain
+      (debit sender amount)
+      (emit-event (TRANSFER sender "" amount))
 
-        (let
-          ((crosschain-details:object{crosschain-schema}
-            { "receiver" : receiver
-            , "receiver-guard" : receiver-guard
-            , "amount" : amount
-            , "source-chain" : (at 'chain-id (chain-data))
-            }))
-          (yield crosschain-details target-chain)
-          )))
+      (let
+        ((crosschain-details:object{crosschain-schema}
+        { "receiver" : receiver
+          , "receiver-guard" : receiver-guard
+          , "amount" : amount
+          , "source-chain" : (at 'chain-id (chain-data))
+          }))
+        (yield crosschain-details target-chain)
+        )))
 
     (step
-      (resume
-        { "receiver" := receiver
+    (resume
+      { "receiver" := receiver
         , "receiver-guard" := receiver-guard
         , "amount" := amount
         , "source-chain" := source-chain
         }
 
-        (emit-event (TRANSFER "" receiver amount))
-        (emit-event (TRANSFER_XCHAIN_RECD "" receiver amount source-chain))
+      (emit-event (TRANSFER "" receiver amount))
+      (emit-event (TRANSFER_XCHAIN_RECD "" receiver amount source-chain))
 
-        ;; step 2 - credit create account on target chain
-        (with-capability (CREDIT receiver)
-          (credit receiver receiver-guard amount))
-        ))
+      ;; step 2 - credit create account on target chain
+      (with-capability (CREDIT receiver)
+        (credit receiver receiver-guard amount))
+      ))
     )
 
 
@@ -608,11 +608,11 @@
       date:time
       keyset-ref:string
       amount:decimal
-    )
+      )
 
     @doc "Add an entry to the coin allocation table. This function \
-         \also creates a corresponding empty coin contract account \
-         \of the same name and guard. Requires GENESIS capability. "
+\also creates a corresponding empty coin contract account \
+\of the same name and guard. Requires GENESIS capability. "
 
     @model [ (property (valid-account account)) ]
 
@@ -631,27 +631,27 @@
 
       (insert allocation-table account
         { "balance" : amount
-        , "date" : date
-        , "guard" : guard
-        , "redeemed" : false
-        })))
+          , "date" : date
+          , "guard" : guard
+          , "redeemed" : false
+          })))
 
   (defun release-allocation
     ( account:string )
 
     @doc "Release funds associated with allocation ACCOUNT into main ledger.   \
-         \ACCOUNT must already exist in main ledger. Allocation is deactivated \
-         \after release."
+\ACCOUNT must already exist in main ledger. Allocation is deactivated \
+\after release."
     @model [ (property (valid-account account)) ]
 
     (validate-account account)
 
     (with-read allocation-table account
       { "balance" := balance
-      , "date" := release-time
-      , "redeemed" := redeemed
-      , "guard" := guard
-      }
+        , "date" := release-time
+        , "redeemed" := redeemed
+        , "guard" := guard
+        }
 
       (let ((curr-time:time (at 'block-time (chain-data))))
 
@@ -664,21 +664,21 @@
 
         (with-capability (RELEASE_ALLOCATION account balance)
 
-        (enforce-guard guard)
+          (enforce-guard guard)
 
-        (with-capability (CREDIT account)
-          (emit-event (TRANSFER "" account balance))
-          (credit account guard balance)
+          (with-capability (CREDIT account)
+            (emit-event (TRANSFER "" account balance))
+            (credit account guard balance)
 
-          (update allocation-table account
-            { "redeemed" : true
-            , "balance" : 0.0
-            })
+            (update allocation-table account
+              { "redeemed" : true
+                , "balance" : 0.0
+                })
 
-          "Allocation successfully released to main ledger"))
-    )))
+            "Allocation successfully released to main ledger"))
+        )))
 
-)
+  )
 
 (create-table coin-table)
 (create-table allocation-table)

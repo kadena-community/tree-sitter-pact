@@ -794,7 +794,7 @@
         "required": true,
         "types": [
           {
-            "type": "atom",
+            "type": "table_schema",
             "named": true
           }
         ]
@@ -1392,20 +1392,21 @@
   {
     "type": "model",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "defproperty",
-          "named": true
-        },
-        {
-          "type": "s_expression",
-          "named": true
-        }
-      ]
+    "fields": {
+      "body": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "defproperty",
+            "named": true
+          },
+          {
+            "type": "s_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -2047,16 +2048,31 @@
     "type": "type_identifier",
     "named": true,
     "fields": {
-      "type_param": {
+      "type_parameter": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "reference",
+            "type": "type_parameter",
             "named": true
           }
         ]
       }
+    }
+  },
+  {
+    "type": "type_parameter",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "atom",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2310,6 +2326,10 @@
   {
     "type": "table",
     "named": false
+  },
+  {
+    "type": "table_schema",
+    "named": true
   },
   {
     "type": "time",
