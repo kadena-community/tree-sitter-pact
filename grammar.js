@@ -273,7 +273,7 @@ module.exports = grammar({
           ),
           field("parameters", $.parameter_list),
           optional($._doc_or_meta),
-          field("steps", repeat(choice($.step, $.step_with_rollback))),
+          field("body", repeat(choice($.step, $.step_with_rollback))),
           PARENS_RIGHT
         )
       ),
@@ -286,7 +286,7 @@ module.exports = grammar({
           "defschema",
           field("name", $._def_name),
           optional($._doc_or_meta),
-          field("properties", repeat($.schema_property)),
+          field("body", repeat($.schema_property)),
           PARENS_RIGHT
         )
       ),
@@ -325,7 +325,7 @@ module.exports = grammar({
           PARENS_LEFT,
           choice("let", "let*"),
           field(
-            "bind_pair",
+            "bind_pairs",
             seq(PARENS_LEFT, repeat($.let_bind_pair), PARENS_RIGHT)
           ),
           field("body", repeat($._from)),

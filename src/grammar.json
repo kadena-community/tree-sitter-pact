@@ -1341,7 +1341,7 @@
           },
           {
             "type": "FIELD",
-            "name": "steps",
+            "name": "body",
             "content": {
               "type": "REPEAT",
               "content": {
@@ -1402,7 +1402,7 @@
           },
           {
             "type": "FIELD",
-            "name": "properties",
+            "name": "body",
             "content": {
               "type": "REPEAT",
               "content": {
@@ -1564,7 +1564,7 @@
           },
           {
             "type": "FIELD",
-            "name": "bind_pair",
+            "name": "bind_pairs",
             "content": {
               "type": "SEQ",
               "members": [

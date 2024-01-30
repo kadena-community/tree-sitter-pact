@@ -473,6 +473,20 @@
     "type": "defpact",
     "named": true,
     "fields": {
+      "body": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "step",
+            "named": true
+          },
+          {
+            "type": "step_with_rollback",
+            "named": true
+          }
+        ]
+      },
       "doc": {
         "multiple": true,
         "required": false,
@@ -549,20 +563,6 @@
         "types": [
           {
             "type": "type_identifier",
-            "named": true
-          }
-        ]
-      },
-      "steps": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "step",
-            "named": true
-          },
-          {
-            "type": "step_with_rollback",
             "named": true
           }
         ]
@@ -653,6 +653,16 @@
     "type": "defschema",
     "named": true,
     "fields": {
+      "body": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "schema_property",
+            "named": true
+          }
+        ]
+      },
       "doc": {
         "multiple": true,
         "required": false,
@@ -709,16 +719,6 @@
         "types": [
           {
             "type": "def_identifier",
-            "named": true
-          }
-        ]
-      },
-      "properties": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "schema_property",
             "named": true
           }
         ]
@@ -1157,7 +1157,7 @@
     "type": "let_binding",
     "named": true,
     "fields": {
-      "bind_pair": {
+      "bind_pairs": {
         "multiple": true,
         "required": true,
         "types": [

@@ -1,13 +1,11 @@
 (module coin G
-  (use coin)
-  (defschema test
-   test:string
-   )
-
- (defun test(s:string e)
-  {
-    "test": s
-  }
- )
+  (defcap G() true)
+  (defun test:string(name:string)
+    (coin.transfer coin.sss "Hello, {}" name coin.ssss)
+    {
+      "test": "Hello"
+    }
+    name
+  )
 )
 

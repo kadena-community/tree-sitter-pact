@@ -1,0 +1,9 @@
+corpus
+test
+examples
+.travis.yml
+appveyor.yml
+.gitattributes
+build
+*.pact
+*.repl

@@ -6,6 +6,11 @@ interface ITest {
 sss;
 type Test = ITest;
 
-function test(test: Test): void {}
+function test(test: Test): void {
+  console.log(test);
+}
 
 document.body.innerHTML = test({ test: "test" });
+
+pact`(coin.transfer "k:asdasdasdasd" [100])
+

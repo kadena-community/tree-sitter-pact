@@ -1,8 +1,8 @@
 (module hello G
 (defcap G() true)
  (defun test(name age)
-    "doc hello world"
+   @doc  "doc hello world"
  )
 )
 
-(print (hello.test s 18))
+(coin.transfer "asds" 44)
