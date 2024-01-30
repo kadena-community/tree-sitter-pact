@@ -1047,22 +1047,6 @@
         }
       ]
     },
-    "def_block": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_doc_or_meta"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_from"
-          }
-        }
-      ]
-    },
     "defun": {
       "type": "PREC",
       "value": 10,
@@ -1124,10 +1108,26 @@
             }
           },
           {
-            "type": "REPEAT",
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_doc_or_meta"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "FIELD",
+            "name": "body",
             "content": {
-              "type": "SYMBOL",
-              "name": "def_block"
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_from"
+              }
             }
           },
           {

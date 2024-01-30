@@ -1,6 +1,7 @@
 (module coin G
   (defcap G() true)
-  (defun test:object{ssss}(name:string)
+  (defun test(name:string)
+    (format "sss {}" 1)
   )
 )
 

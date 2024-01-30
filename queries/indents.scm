@@ -38,3 +38,36 @@
   (comment)
   (ERROR)
 ] @indent.auto
+
+
+[
+  (list "[")
+  (object "{")
+  (module body: (_))
+  (parameter_list)
+  (use imports: (list))
+  (defun body: (_))
+  (defcap body: (_))
+  (defconst body: (_))
+  (defschema body: (_))
+  (defpact body: (_))
+  (let_binding body: (_))
+  (let_binding bind_pairs: (_))
+  (defproperty body: (_))
+  (model "[")
+  (s_expression tail: (_))
+] @indent
+
+
+(object "}" @indent.outdent)
+(list "]" @indent.outdent)
+(module ")" @indent.outdent)
+(defun ")" @indent.outdent)
+(defcap ")" @indent.outdent)
+(defconst ")" @indent.outdent)
+(defschema ")" @indent.outdent)
+(defpact ")" @indent.outdent)
+(let_binding ")" @indent.outdent)
+(defproperty ")" @indent.outdent)
+(model "]" @indent.outdent)
+(s_expression ")" @indent.outdent)

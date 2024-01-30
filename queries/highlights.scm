@@ -124,7 +124,9 @@
 (doc_string) @string.documentation
 (module_identifier) @module
 (module_governance) @function
-
+(integer) @constant.numeric
+(decimal) @constant.numeric
+(boolean) @constant.builtin.boolean
 (use module: (reference) @module)
 
 
