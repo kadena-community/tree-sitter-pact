@@ -124,9 +124,6 @@
 (doc_string) @string.documentation
 (module_identifier) @module
 (module_governance) @function
-(integer) @constant.numeric
-(decimal) @constant.numeric
-(boolean) @constant.builtin.boolean
 (use module: (reference) @module)
 
 
@@ -135,7 +132,7 @@
 (defcap name: (def_identifier) @function.method)
 (defconst name: (def_identifier) @constant)
 (defschema name: (def_identifier) @type.definition)
-(defproperty name: (def_identifier) @function)
+(defproperty name: (def_identifier) @function.method)
 
 
 (parameter_identifier) @variable.parameter
