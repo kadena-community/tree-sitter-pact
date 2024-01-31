@@ -39,8 +39,8 @@ also you need to link the queries folder to your nvim config folder
 
 ``` bash
 ln ./queries/highlights.scm ~/.config/nvim/after/queries/pact/highlights.scm
-ln ./queries/locals.scm ~/.config/nvim/after/queries/pact/locals.scm        
+ln ./queries/locals.scm ~/.config/nvim/after/queries/pact/locals.scm
+ln ./queries/textobjects.scm ~/.config/nvim/after/queries/pact/textobjects.scm
+ln ./queries/folds.scm ~/.config/nvim/after/queries/pact/folds.scm
+ln ./queries/indents.scm ~/.config/nvim/after/queries/pact/indents.scm
 ```
-
-
-

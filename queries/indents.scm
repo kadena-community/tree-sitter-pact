@@ -13,7 +13,6 @@
   (let_binding bind_pairs: (_))
   (defproperty body: (_))
   (model "[")
-  (s_expression tail: (_))
 ] @indent.begin
 
 
@@ -28,7 +27,6 @@
 (let_binding ")" @indent.end)
 (defproperty ")" @indent.end)
 (model "]" @indent.end)
-(s_expression ")" @indent.end)
 
 
 (string) @indent.ignore
