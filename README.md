@@ -11,7 +11,7 @@ I will create a PR to add this to the official nvim-treesitter repo once it's re
 Clone the repo
 
 ``` bash
-git clone https://github.com/salamaashoush/tree-sitter-pact.git
+git clone https://github.com/kadena-community/tree-sitter-pact.git
 ```
 
 Add those to your init.lua
