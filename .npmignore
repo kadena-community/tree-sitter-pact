@@ -7,3 +7,5 @@ appveyor.yml
 build
 *.pact
 *.repl
+test.*
+parser.js

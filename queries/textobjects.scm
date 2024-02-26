@@ -5,12 +5,6 @@
 (defcap body: (_)* @function.inner) @function.outer
 (defproperty body: (_)* @function.inner) @function.outer
 
-;helix
-(defun body: (_)* @function.inside) @function.around
-(defpact body: (_)* @function.inside) @function.around
-(defconst body: (_)* @function.inside) @function.around
-(defcap body: (_)* @function.inside) @function.around
-(defproperty body: (_)* @function.inside) @function.around
 
 
 

@@ -6,7 +6,16 @@ const Parser = require("tree-sitter");
 const parser = new Parser();
 const query = new Parser.Query(
   Pact,
-  `(defun (def_identifier) @name (parameter_list (parameter)) @params (type_annotation (type_identifier)) @return_type) @function`
+  `(module (module_identifier) @module.name)
+(defcap name:(def_identifier) @capability.name
+  parameters: (parameter_list)? @capability.params
+  return_type: (type_identifier)? @capability.return_type
+) @capability
+(defun name:(def_identifier) @function.name 
+  parameters: (parameter_list)? @function.params 
+  return_type: (type_identifier)? @function.return_type
+) @function
+`
 );
 parser.setLanguage(Pact);
 

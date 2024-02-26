@@ -1,8 +1,20 @@
-(module hello G
-(defcap G() true)
- (defun test(name age)
-   @doc  "doc hello world"
- )
+; File used to test definition request
+
+(module test G
+  @doc "This is a test module"
+  (defcap G () true)
+
+  (defun my-fun-1 (a: integer)
+  "This is a test function"
+    1)
+
+  (defun my-fun-2 (a: integer)
+    (format "{}" a) ;// the error should be here
+  )
+
+  (defun my-fun-3 (a: integer)
+    (format "{}");// the error should be here
+  )
 )
 
-(coin.transfer "asds" 44)
+;used for retrieve the toplevel definition

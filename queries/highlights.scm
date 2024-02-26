@@ -54,7 +54,6 @@
   "bless"
   "interface"
   "implements"
-  "deftable"
 ] @keyword
 
 "use" @keyword.import
@@ -69,11 +68,13 @@
 [
   "defun"
   "defcap"
+  "defproperty"
 ] @keyword.function 
 
 [
   "let"
   "let*"
+  "deftable"
 ] @keyword.storage
 
 "namespace" @keyword.directive 
@@ -132,7 +133,7 @@
 (defcap name: (def_identifier) @function.method)
 (defconst name: (def_identifier) @constant)
 (defschema name: (def_identifier) @type.definition)
-(defproperty name: (def_identifier) @function.method)
+(defproperty name: (def_identifier) @function)
 
 
 (parameter_identifier) @variable.parameter
