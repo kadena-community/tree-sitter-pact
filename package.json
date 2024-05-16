@@ -3,30 +3,51 @@
   "version": "0.0.1",
   "description": "Pact grammar for tree-sitter",
   "main": "./bindings/node",
+  "types": "bindings/node",
   "scripts": {
     "generate": "tree-sitter generate",
     "build:node": "node-gyp build",
     "test": "tree-sitter test",
     "build": "pnpm run generate && pnpm run build:node && pnpm run build:wasm",
-    "build:wasm": "tree-sitter build-wasm",
-    "playground": "tree-sitter build-wasm && tree-sitter playground",
+    "build:wasm": "tree-sitter build --wasm",
+    "playground": "tree-sitter build --wasm && tree-sitter playground",
     "parse:test": "tree-sitter parse test.pact",
-    "parse:coin": "tree-sitter parse coin.pact"
+    "parse:coin": "tree-sitter parse coin.pact",
+    "install": "node-gyp-build",
+    "prebuildify": "prebuildify --napi --strip"
   },
   "keywords": [
     "tree-sitter",
     "pact",
     "kadena"
   ],
+  "files": [
+    "grammar.js",
+    "binding.gyp",
+    "prebuilds/**",
+    "bindings/node/*",
+    "queries/*",
+    "src/**"
+  ],
   "author": "Salama Ashoush <salamaashoush@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "nan": "^2.18.0"
+    "node-addon-api": "^8.0.0",
+    "node-gyp-build": "^4.8.1"
+  },
+  "peerDependencies": {
+    "tree-sitter": "^0.21.1"
+  },
+  "peerDependenciesMeta": {
+    "tree_sitter": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "tree-sitter-cli": "^0.21.0",
-    "tree-sitter": "^0.20.6",
-    "node-gyp": "^10.0.1"
+    "node-gyp": "^10.1.0",
+    "tree-sitter": "^0.21.1",
+    "tree-sitter-cli": "^0.22.6",
+    "prebuildify": "^6.0.1"
   },
   "tree-sitter": [
     {
