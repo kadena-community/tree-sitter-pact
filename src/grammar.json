@@ -449,6 +449,87 @@
         ]
       }
     },
+    "_parametrized_object": {
+      "type": "PREC",
+      "value": 40,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "object"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "table"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": "{"
+          },
+          {
+            "type": "FIELD",
+            "name": "type_parameter",
+            "content": {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "reference"
+              },
+              "named": true,
+              "value": "type_parameter"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "}"
+          }
+        ]
+      }
+    },
+    "_parametrized_list": {
+      "type": "PREC",
+      "value": 40,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "["
+          },
+          {
+            "type": "FIELD",
+            "name": "type_parameter",
+            "content": {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "type_identifier"
+              },
+              "named": true,
+              "value": "type_parameter"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "]"
+          }
+        ]
+      }
+    },
     "type_identifier": {
       "type": "PREC_LEFT",
       "value": 20,
@@ -492,55 +573,12 @@
             "value": "guard"
           },
           {
-            "type": "PREC",
-            "value": 40,
-            "content": {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "STRING",
-                          "value": "object"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "table"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                },
-                {
-                  "type": "STRING",
-                  "value": "{"
-                },
-                {
-                  "type": "FIELD",
-                  "name": "type_parameter",
-                  "content": {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "reference"
-                    },
-                    "named": true,
-                    "value": "type_parameter"
-                  }
-                },
-                {
-                  "type": "STRING",
-                  "value": "}"
-                }
-              ]
-            }
+            "type": "SYMBOL",
+            "name": "_parametrized_object"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_parametrized_list"
           },
           {
             "type": "STRING",
@@ -2091,14 +2129,6 @@
     }
   ],
   "conflicts": [
-    [
-      "_literal",
-      "doc"
-    ],
-    [
-      "_from",
-      "s_expression"
-    ],
     [
       "list"
     ]

@@ -25,14 +25,14 @@
 (module_governance) @local.reference
 
 (defun (def_identifier) @local.definition.function
-  (set! definition.function.scope "parent")
+  (#set! definition.function.scope "parent")
 )
 (defpact (def_identifier) @local.definition.function
-  (set! definition.function.scope "parent")
+  (#set! definition.function.scope "parent")
 )
 (defcap (def_identifier) @local.definition.function
-  (set! definition.function.scope "parent")
+  (#set! definition.function.scope "parent")
 )
 (module (module_identifier) @local.definition.module
-  (set! definition.module.scope "global")
+  (#set! definition.module.scope "global")
 )

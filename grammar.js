@@ -67,7 +67,7 @@ function withParens(rules) {
 module.exports = grammar({
   name: "pact",
   extras: ($) => [$.comment, WHITESPACE],
-  conflicts: ($) => [[$._literal, $.doc], [$._from, $.s_expression], [$.list]],
+  conflicts: ($) => [[$.list]],
   // supertypes: ($) => [$.s_expression],
   word: ($) => $.atom,
   rules: {
@@ -109,6 +109,27 @@ module.exports = grammar({
     atom: ($) => ATOM,
     reference: ($) => prec(20, seq($.atom, repeat(seq(".", $.atom)))),
     // _delimiter: ($) => choice(".", ",", ":", "::"),
+    // object{type_parameter}, table{type_parameter}
+    _parametrized_object: ($) =>
+      prec(
+        40,
+        seq(
+          optional(choice("object", "table")),
+          "{",
+          field("type_parameter", alias($.reference, $.type_parameter)),
+          "}"
+        )
+      ),
+    // [object{type_parameter}]
+    _parametrized_list: ($) =>
+      prec(
+        40,
+        seq(
+          "[",
+          field("type_parameter", alias($.type_identifier, $.type_parameter)),
+          "]"
+        )
+      ),
     type_identifier: ($) =>
       prec.left(
         20,
@@ -122,15 +143,8 @@ module.exports = grammar({
           "value",
           "keyset",
           "guard",
-          prec(
-            40,
-            seq(
-              optional(choice("object", "table")),
-              "{",
-              field("type_parameter", alias($.reference, $.type_parameter)),
-              "}"
-            )
-          ),
+          $._parametrized_object,
+          $._parametrized_list,
           "object",
           "table"
         )

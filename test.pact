@@ -1,12 +1,8 @@
-(module test G
-  (defcap G () true)
-
-  (defun my-fun-1 (a: integer)
-    1)
-
-  (defun my-fun-2:string (a: integer)
-    (my-fun-1 a))
+(module todos G
+  (defun read-todos:[[object{todo}]] ()
+    "Read all todos."
+    (map (read-todo) (keys todo-table))
   )
+)
 
-;used for retrieve the toplevel definition
-(test.my-fun-1 1)
+

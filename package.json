@@ -1,8 +1,8 @@
 {
   "name": "tree-sitter-pact",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Pact grammar for tree-sitter",
-  "main": "./bindings/node",
+  "main": "bindings/node",
   "types": "bindings/node",
   "scripts": {
     "generate": "tree-sitter generate",
@@ -32,7 +32,7 @@
   "author": "Salama Ashoush <salamaashoush@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "node-addon-api": "^8.0.0",
+    "node-addon-api": "^8.1.0",
     "node-gyp-build": "^4.8.1"
   },
   "peerDependencies": {
@@ -44,10 +44,10 @@
     }
   },
   "devDependencies": {
-    "node-gyp": "^10.1.0",
+    "node-gyp": "^10.2.0",
+    "prebuildify": "^6.0.1",
     "tree-sitter": "^0.21.1",
-    "tree-sitter-cli": "^0.22.6",
-    "prebuildify": "^6.0.1"
+    "tree-sitter-cli": "^0.22.6"
   },
   "tree-sitter": [
     {
@@ -73,5 +73,6 @@
       ],
       "injection-regex": "^(pact|repl)$"
     }
-  ]
+  ],
+  "packageManager": "pnpm@9.6.0"
 }
