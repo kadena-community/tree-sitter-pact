@@ -1,7 +1,8 @@
-(module 
-  name: (module_identifier) @name
-  body: (defun name:(def_identifier) @name 
-               parameters: (parameter_list (parameter)) @params 
-               return_type: (type_identifier)? @return_type
-        ) @function
-)
+(s_expression
+  head: (s_expression_head) @name
+  (#any-of? @name
+    "enforce" "enforce-guard" "enforce-keyset" "enforce-one" "enforce-pact-version" "try"
+  )
+  tail: (string) @run
+  (#set! tag pact-repl)
+) @pact-repl

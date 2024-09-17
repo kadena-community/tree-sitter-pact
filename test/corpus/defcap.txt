@@ -24,7 +24,8 @@ defcap
             (parameter_identifier)
             (type_annotation
                 (type_identifier))))
-        (string)
+        (doc
+            (doc_string))
         (s_expression
             (s_expression_head (atom))
         (s_expression

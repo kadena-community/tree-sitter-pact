@@ -27,12 +27,13 @@ const STRING = token(
 const SYMBOL = token(
   seq(
     "'", // Starting with an apostrophe
+    // eslint-disable-next-line no-useless-escape
     /[^\s\t\n\r,:."'\[\]()]+/ // Continuing with characters that are not whitespace or specified punctuation
   )
 );
 
 const PREC = {
-  DOC: 5,
+  DOC: 20,
   SPECIAL_FORM: 10,
   LITERAL: 15,
 };
@@ -73,14 +74,14 @@ module.exports = grammar({
   rules: {
     source_file: ($) =>
       repeat(choice($.namespace, $.s_expression, $.use, $.module, $.interface)),
-    comment: ($) => COMMENT,
+    comment: () => COMMENT,
 
     // literals
-    integer: ($) => INTEGER,
-    decimal: ($) => DECIMAL,
-    string: ($) => STRING,
-    boolean: ($) => BOOLEAN,
-    symbol: ($) => SYMBOL,
+    integer: () => INTEGER,
+    decimal: () => DECIMAL,
+    string: () => STRING,
+    boolean: () => BOOLEAN,
+    symbol: () => SYMBOL,
     list: ($) => listOf($._from),
     object: ($) => seq("{", commaSep(choice($.pair, $.bind_pair)), "}"),
     _literal: ($) =>
@@ -98,7 +99,11 @@ module.exports = grammar({
           $.reference
         )
       ),
-    _from: ($) => choice($._literal, $.let_binding, $.cond, $.s_expression),
+    _from: ($) =>
+      prec.left(
+        PREC.LITERAL,
+        choice($._literal, $.let_binding, $.cond, $.s_expression)
+      ),
     s_expression: ($) =>
       withParens(
         seq(
@@ -106,7 +111,7 @@ module.exports = grammar({
           optional(field("tail", repeat($._from)))
         )
       ),
-    atom: ($) => ATOM,
+    atom: () => ATOM,
     reference: ($) => prec(20, seq($.atom, repeat(seq(".", $.atom)))),
     // _delimiter: ($) => choice(".", ",", ":", "::"),
     // object{type_parameter}, table{type_parameter}
@@ -170,22 +175,28 @@ module.exports = grammar({
       alias(choice($.string, $.symbol), $.property_identifier),
     _def_name: ($) => alias($.atom, $.def_identifier),
     _doc_or_meta: ($) =>
-      repeat1(
-        choice(
-          field("doc", $.doc),
-          field("model", $.model),
-          field("managed", $.managed),
-          field("event", $.event),
-          field("meta", $.meta)
+      prec.right(
+        PREC.DOC,
+        repeat1(
+          choice(
+            field("doc", $.doc),
+            field("model", $.model),
+            field("managed", $.managed),
+            field("event", $.event),
+            field("meta", $.meta)
+          )
         )
       ),
 
     // special forms
     // <string> or @doc <string>
     doc: ($) =>
-      choice(
-        seq("@doc", alias($.string, $.doc_string)),
-        alias($.string, $.doc_string)
+      prec.right(
+        PREC.DOC,
+        choice(
+          seq("@doc", alias($.string, $.doc_string)),
+          alias($.string, $.doc_string)
+        )
       ),
     model: ($) =>
       seq(

@@ -343,25 +343,29 @@
       }
     },
     "_from": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_literal"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "let_binding"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cond"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "s_expression"
-        }
-      ]
+      "type": "PREC_LEFT",
+      "value": 15,
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_literal"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "let_binding"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cond"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "s_expression"
+          }
+        ]
+      }
     },
     "s_expression": {
       "type": "SEQ",
@@ -774,84 +778,92 @@
       "value": "def_identifier"
     },
     "_doc_or_meta": {
-      "type": "REPEAT1",
+      "type": "PREC_RIGHT",
+      "value": 20,
+      "content": {
+        "type": "REPEAT1",
+        "content": {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "doc",
+              "content": {
+                "type": "SYMBOL",
+                "name": "doc"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "model",
+              "content": {
+                "type": "SYMBOL",
+                "name": "model"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "managed",
+              "content": {
+                "type": "SYMBOL",
+                "name": "managed"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "event",
+              "content": {
+                "type": "SYMBOL",
+                "name": "event"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "meta",
+              "content": {
+                "type": "SYMBOL",
+                "name": "meta"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "doc": {
+      "type": "PREC_RIGHT",
+      "value": 20,
       "content": {
         "type": "CHOICE",
         "members": [
           {
-            "type": "FIELD",
-            "name": "doc",
-            "content": {
-              "type": "SYMBOL",
-              "name": "doc"
-            }
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "@doc"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "string"
+                },
+                "named": true,
+                "value": "doc_string"
+              }
+            ]
           },
           {
-            "type": "FIELD",
-            "name": "model",
+            "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "model"
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "managed",
-            "content": {
-              "type": "SYMBOL",
-              "name": "managed"
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "event",
-            "content": {
-              "type": "SYMBOL",
-              "name": "event"
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "meta",
-            "content": {
-              "type": "SYMBOL",
-              "name": "meta"
-            }
+              "name": "string"
+            },
+            "named": true,
+            "value": "doc_string"
           }
         ]
       }
-    },
-    "doc": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "@doc"
-            },
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "string"
-              },
-              "named": true,
-              "value": "doc_string"
-            }
-          ]
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "string"
-          },
-          "named": true,
-          "value": "doc_string"
-        }
-      ]
     },
     "model": {
       "type": "SEQ",
