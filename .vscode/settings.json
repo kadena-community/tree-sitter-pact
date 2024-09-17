@@ -1,5 +1,8 @@
 {
   "coverage-gutters.showLineCoverage": false,
   "coverage-gutters.showRulerCoverage": false,
-  "coverage-gutters.showGutterCoverage": false
+  "coverage-gutters.showGutterCoverage": false,
+  "python.testing.unittestArgs": ["-v", "-s", ".", "-p", "test_*.py"],
+  "python.testing.pytestEnabled": false,
+  "python.testing.unittestEnabled": true
 }
