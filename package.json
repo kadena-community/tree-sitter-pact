@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-pact",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Pact grammar for tree-sitter",
   "main": "bindings/node",
   "types": "bindings/node",
@@ -10,7 +10,7 @@
     "start": "tree-sitter playground",
     "lint": "eslint grammar.js",
     "test": "tree-sitter test && node --test bindings/node/*_test.js",
-    "build": "node-gyp-build && tree-sitter build --wasm",
+    "build": "tree-sitter build && tree-sitter build --wasm",
     "prepublish": "pnpm run build",
     "parse:test": "tree-sitter parse test.pact",
     "parse:coin": "tree-sitter parse coin.pact"
@@ -35,8 +35,8 @@
     "node-gyp-build": "^4.8.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.10.0",
-    "eslint": "^9.10.0",
+    "@eslint/js": "^9.11.0",
+    "eslint": "^9.11.0",
     "globals": "^15.9.0",
     "node-gyp": "^10.2.0",
     "prebuildify": "^6.0.1",
@@ -76,5 +76,5 @@
       "injection-regex": "^(pact|repl)$"
     }
   ],
-  "packageManager": "pnpm@9.10.0"
+  "packageManager": "pnpm@9.11.0"
 }

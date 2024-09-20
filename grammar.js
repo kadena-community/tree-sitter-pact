@@ -154,17 +154,18 @@ module.exports = grammar({
           "table"
         )
       ),
-    type_annotation: ($) => seq(":", field("type", $.type_identifier)),
+    type_annotation: ($) => seq(":", $.type_identifier),
     parameter_list: ($) => withParens(optional(repeat($.parameter))),
     parameter: ($) =>
       seq(
         field("name", alias($.atom, $.parameter_identifier)),
-        optional($.type_annotation)
+        field("type", optional($.type_annotation))
       ),
-    schema_property: ($) =>
+    schema_field_list: ($) => repeat1($.schema_field),
+    schema_field: ($) =>
       seq(
-        field("name", alias($.atom, $.schema_property_identifier)),
-        optional($.type_annotation)
+        field("name", alias($.atom, $.schema_field_identifier)),
+        field("type", optional($.type_annotation))
       ),
     pair: ($) =>
       seq(field("key", $._property_name), ":", field("value", $._from)),
@@ -252,7 +253,7 @@ module.exports = grammar({
           "defun",
           seq(
             field("name", $._def_name),
-            optional(seq(":", field("return_type", $.type_identifier)))
+            field("return_type", optional($.type_annotation))
           ),
           field("parameters", $.parameter_list),
           optional($._doc_or_meta),
@@ -269,7 +270,7 @@ module.exports = grammar({
           "defcap",
           seq(
             field("name", $._def_name),
-            optional(seq(":", field("return_type", $.type_identifier)))
+            field("return_type", optional($.type_annotation))
           ),
           field("parameters", $.parameter_list),
           optional($._doc_or_meta),
@@ -299,7 +300,7 @@ module.exports = grammar({
           "defpact",
           seq(
             field("name", $._def_name),
-            optional(seq(":", field("return_type", $.type_identifier)))
+            field("return_type", optional($.type_annotation))
           ),
           field("parameters", $.parameter_list),
           optional($._doc_or_meta),
@@ -316,7 +317,7 @@ module.exports = grammar({
           "defschema",
           field("name", $._def_name),
           optional($._doc_or_meta),
-          field("body", repeat($.schema_property)),
+          field("fields", $.schema_field_list),
           PARENS_RIGHT
         )
       ),
@@ -341,7 +342,7 @@ module.exports = grammar({
     let_variable: ($) =>
       seq(
         field("name", alias($.atom, $.let_variable_identifier)),
-        optional($.type_annotation)
+        field("type", optional($.type_annotation))
       ),
     let_bind_pair: ($) =>
       seq(PARENS_LEFT, $.let_variable, field("value", $._from), PARENS_RIGHT),
