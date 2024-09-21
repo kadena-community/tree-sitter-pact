@@ -9,6 +9,9 @@ on:
       - test/**
       - bindings/**
       - binding.gyp
+      - examples/**
+      - .github/workflows/ci.yml
+      - queries/**
   pull_request:
     paths:
       - grammar.js
@@ -16,6 +19,9 @@ on:
       - test/**
       - bindings/**
       - binding.gyp
+      - examples/**
+      - .github/workflows/ci.yml
+      - queries/**
 
 concurrency:
   group: ${{github.workflow}}-${{github.ref}}
