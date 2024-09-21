@@ -6,7 +6,6 @@
 (defpact) @local.scope
 (module) @local.scope
 (let_binding) @local.scope
-(defschema) @local.scope
 (defproperty) @local.scope
 
 (use imports: (list (reference) @local.definition))
@@ -20,7 +19,7 @@
 ;------------
 (reference (atom) @local.reference)
 (def_identifier) @local.definition.function
-(schema_property_identifier) @local.definition
+(schema_field_identifier) @local.definition
 (module_identifier) @local.definition
 (module_governance) @local.reference
 

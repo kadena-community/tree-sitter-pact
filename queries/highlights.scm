@@ -21,15 +21,15 @@
 )
 
 (s_expression
-  head: (s_expression_head) @keyword.operator 
-  (#any-of? @keyword.operator 
+  head: (s_expression_head) @keyword.operator
+  (#any-of? @keyword.operator
     "and" "and?" "not" "not?" "or" "or?" "xor"
   )
 )
 
 (s_expression
   head: (s_expression_head) @keyword.conditional
-  (#any-of? @keyword.operator 
+  (#any-of? @keyword.operator
     "if" "cond"
   )
 )
@@ -63,13 +63,13 @@
   "step-with-rollback"
 ] @keyword.return
 
-"defpact" @keyword.coroutine      
+"defpact" @keyword.coroutine
 
 [
   "defun"
   "defcap"
   "defproperty"
-] @keyword.function 
+] @keyword.function
 
 [
   "let"
@@ -77,7 +77,7 @@
   "deftable"
 ] @keyword.storage
 
-"namespace" @keyword.directive 
+"namespace" @keyword.directive
 
 [
   (model)
@@ -85,13 +85,13 @@
   (doc)
   (event)
   (meta)
-]  @attribute 
+]  @attribute
 
 
 (type_annotation  ":" @punctuation.delimiter)
 (pair ":" @punctuation.delimiter)
 (list "," @punctuation.delimiter)
-(reference "." @punctuation.delimiter) 
+(reference "." @punctuation.delimiter)
 
 [
   "("
@@ -121,7 +121,7 @@
 (boolean) @boolean
 (symbol) @string.special.symbol
 (property_identifier) @property
-(schema_property_identifier) @property
+(schema_field_identifier) @property
 (doc_string) @string.documentation
 (module_identifier) @module
 (module_governance) @function
