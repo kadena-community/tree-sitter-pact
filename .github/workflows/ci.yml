@@ -3,25 +3,8 @@ name: CI
 on:
   push:
     branches: [main]
-    paths:
-      - grammar.js
-      - src/**
-      - test/**
-      - bindings/**
-      - binding.gyp
-      - examples/**
-      - .github/workflows/ci.yml
-      - queries/**
   pull_request:
-    paths:
-      - grammar.js
-      - src/**
-      - test/**
-      - bindings/**
-      - binding.gyp
-      - examples/**
-      - .github/workflows/ci.yml
-      - queries/**
+  workflow_dispatch:
 
 concurrency:
   group: ${{github.workflow}}-${{github.ref}}
