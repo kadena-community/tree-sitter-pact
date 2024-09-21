@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-pact",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Pact grammar for tree-sitter",
   "main": "bindings/node",
   "types": "bindings/node",
@@ -9,10 +9,7 @@
     "prestart": "tree-sitter build --wasm",
     "start": "tree-sitter playground",
     "lint": "eslint grammar.js",
-    "test": "tree-sitter test && node --test bindings/node/*_test.js",
-    "prepublish": "tree-sitter build",
-    "parse:test": "tree-sitter parse test.pact",
-    "parse:coin": "tree-sitter parse coin.pact"
+    "test": "node --test bindings/node/*_test.js"
   },
   "keywords": [
     "tree-sitter",
