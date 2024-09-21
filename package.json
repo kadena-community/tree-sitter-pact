@@ -10,8 +10,7 @@
     "start": "tree-sitter playground",
     "lint": "eslint grammar.js",
     "test": "tree-sitter test && node --test bindings/node/*_test.js",
-    "build": "tree-sitter build && tree-sitter build --wasm",
-    "prepublish": "npm run build",
+    "prepublish": "tree-sitter build",
     "parse:test": "tree-sitter parse test.pact",
     "parse:coin": "tree-sitter parse coin.pact"
   },
