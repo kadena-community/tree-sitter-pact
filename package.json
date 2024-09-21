@@ -11,7 +11,7 @@
     "lint": "eslint grammar.js",
     "test": "tree-sitter test && node --test bindings/node/*_test.js",
     "build": "tree-sitter build && tree-sitter build --wasm",
-    "prepublish": "pnpm run build",
+    "prepublish": "npm run build",
     "parse:test": "tree-sitter parse test.pact",
     "parse:coin": "tree-sitter parse coin.pact"
   },
@@ -75,6 +75,5 @@
       ],
       "injection-regex": "^(pact|repl)$"
     }
-  ],
-  "packageManager": "pnpm@9.11.0"
+  ]
 }
