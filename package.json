@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-pact",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Pact grammar for tree-sitter",
   "main": "bindings/node",
   "types": "bindings/node",
@@ -17,7 +17,8 @@
   "keywords": [
     "tree-sitter",
     "pact",
-    "kadena"
+    "kadena",
+    "smart contracts"
   ],
   "files": [
     "grammar.js",
