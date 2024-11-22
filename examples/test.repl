@@ -18,3 +18,4 @@
 )
 
 ;used for retrieve the toplevel definition
+(test.my-fun-1 1)

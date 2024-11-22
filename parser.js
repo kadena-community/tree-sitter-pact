@@ -11,11 +11,11 @@ const query = new Parser.Query(
   parameters: (parameter_list)? @capability.params
   return_type: (type_identifier)? @capability.return_type
 ) @capability
-(defun name:(def_identifier) @function.name 
-  parameters: (parameter_list)? @function.params 
+(defun name:(def_identifier) @function.name
+  parameters: (parameter_list)? @function.params
   return_type: (type_identifier)? @function.return_type
 ) @function
-`
+`,
 );
 parser.setLanguage(Pact);
 
@@ -39,5 +39,5 @@ const sourceCode = fs.readFileSync("./test.pact").toString();
 const tree = parser.parse(sourceCode);
 const matches = query.matches(tree.rootNode);
 console.log(
-  formatMatches(tree, matches).flatMap((m) => m.captures.map((c) => c.text))
+  formatMatches(tree, matches).flatMap((m) => m.captures.map((c) => c.text)),
 );

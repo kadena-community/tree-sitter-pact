@@ -1,5 +1,9 @@
-// swift-tools-version:5.3
+// swift-tools-version: 5.9
 import PackageDescription
+
+let settings: [SwiftSetting] = [
+    .enableExperimentalFeature("StrictConcurrency")
+]
 
 let package = Package(
     name: "TreeSitterPact",
@@ -7,7 +11,7 @@ let package = Package(
         .library(name: "TreeSitterPact", targets: ["TreeSitterPact"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ChimeHQ/SwiftTreeSitter", from: "0.8.0")
+        .package(url: "https://github.com/ChimeHQ/SwiftTreeSitter", branch: "main")
     ],
     targets: [
         .target(

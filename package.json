@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-pact",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Pact grammar for tree-sitter",
   "main": "bindings/node",
   "types": "bindings/node",
@@ -28,17 +28,18 @@
   "author": "Salama Ashoush <salamaashoush@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "node-addon-api": "^8.1.0",
-    "node-gyp-build": "^4.8.2"
+    "node-addon-api": "^8.2.2",
+    "node-gyp-build": "^4.8.4"
   },
   "devDependencies": {
-    "@eslint/js": "^9.11.0",
-    "eslint": "^9.11.0",
-    "globals": "^15.9.0",
+    "@eslint/js": "^9.15.0",
+    "eslint": "^9.15.0",
+    "globals": "^15.12.0",
     "node-gyp": "^10.2.0",
     "prebuildify": "^6.0.1",
-    "tree-sitter": "^0.21.1",
-    "tree-sitter-cli": "^0.23.0"
+    "tree-sitter": "^0.22.1",
+    "tree-sitter-cli": "^0.24.4",
+    "eslint-config-treesitter": "^1.0.2"
   },
   "peerDependencies": {
     "tree-sitter": "^0.21.1"
@@ -47,30 +48,5 @@
     "tree_sitter": {
       "optional": true
     }
-  },
-  "tree-sitter": [
-    {
-      "scope": "source.pact",
-      "file-types": [
-        "pact",
-        "repl"
-      ],
-      "tags": [
-        "queries/tags.scm"
-      ],
-      "folds": [
-        "queries/folds.scm"
-      ],
-      "indents": [
-        "queries/indents.scm"
-      ],
-      "highlights": [
-        "queries/highlights.scm"
-      ],
-      "locals": [
-        "queries/locals.scm"
-      ],
-      "injection-regex": "^(pact|repl)$"
-    }
-  ]
+  }
 }
