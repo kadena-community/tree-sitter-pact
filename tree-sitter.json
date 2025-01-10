@@ -13,7 +13,7 @@
     }
   ],
   "metadata": {
-    "version": "0.0.8",
+    "version": "0.0.9",
     "license": "MIT",
     "description": "Pact grammar for tree-sitter",
     "authors": [
@@ -32,6 +32,8 @@
     "node": true,
     "python": true,
     "rust": true,
-    "swift": true
+    "swift": true,
+    "java": true,
+    "kotlin": true
   }
 }

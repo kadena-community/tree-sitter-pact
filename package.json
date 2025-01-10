@@ -1,12 +1,14 @@
 {
   "name": "tree-sitter-pact",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Pact grammar for tree-sitter",
   "main": "bindings/node",
   "types": "bindings/node",
   "scripts": {
     "install": "node-gyp-build",
-    "prestart": "tree-sitter build --wasm",
+    "build": "prebuildify --napi --strip",
+    "rebuild": "node-gyp rebuild",
+    "prestart": "tree-sitter build --wasm --docker",
     "start": "tree-sitter playground",
     "lint": "eslint grammar.js",
     "test": "node --test bindings/node/*_test.js"
@@ -28,21 +30,21 @@
   "author": "Salama Ashoush <salamaashoush@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "node-addon-api": "^8.2.2",
+    "node-addon-api": "^8.3.0",
     "node-gyp-build": "^4.8.4"
   },
   "devDependencies": {
-    "@eslint/js": "^9.15.0",
-    "eslint": "^9.15.0",
-    "globals": "^15.12.0",
-    "node-gyp": "^10.2.0",
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "node-gyp": "^11.0.0",
     "prebuildify": "^6.0.1",
-    "tree-sitter": "^0.22.1",
-    "tree-sitter-cli": "^0.24.4",
+    "tree-sitter": "^0.22.4",
+    "tree-sitter-cli": "^0.24.6",
     "eslint-config-treesitter": "^1.0.2"
   },
   "peerDependencies": {
-    "tree-sitter": "^0.21.1"
+    "tree-sitter": "^0.22.4"
   },
   "peerDependenciesMeta": {
     "tree_sitter": {
