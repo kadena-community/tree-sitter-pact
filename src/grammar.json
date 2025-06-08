@@ -1,7 +1,7 @@
 {
   "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
   "name": "pact",
-  "word": "atom",
+  "word": "ident",
   "rules": {
     "source_file": {
       "type": "REPEAT",
@@ -171,17 +171,8 @@
     "symbol": {
       "type": "TOKEN",
       "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "'"
-          },
-          {
-            "type": "PATTERN",
-            "value": "[^\\s\\t\\n\\r,:.\"'\\[\\]()]+"
-          }
-        ]
+        "type": "PATTERN",
+        "value": "'[a-zA-Z][a-zA-Z0-9\\-_]*"
       }
     },
     "list": {
@@ -383,7 +374,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "atom"
+            "name": "ident"
           },
           {
             "type": "SYMBOL",
@@ -441,6 +432,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "lambda_expression"
+        },
+        {
+          "type": "SYMBOL",
           "name": "s_expression"
         }
       ]
@@ -458,8 +453,17 @@
           "content": {
             "type": "ALIAS",
             "content": {
-              "type": "SYMBOL",
-              "name": "reference"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "reference"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "dereference"
+                }
+              ]
             },
             "named": true,
             "value": "s_expression_head"
@@ -490,11 +494,11 @@
         }
       ]
     },
-    "atom": {
+    "ident": {
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[a-zA-Z%#+\\-_&$@<>=?*!|/][a-zA-Z0-9%#+\\-_&$@<>=?*!|/]*"
+        "value": "[a-zA-Z%#+\\-_&$@<>=^?*!|/~][a-zA-Z0-9%#+\\-_&$@<>=^?*!|/~]*"
       }
     },
     "reference": {
@@ -505,7 +509,7 @@
         "members": [
           {
             "type": "SYMBOL",
-            "name": "atom"
+            "name": "ident"
           },
           {
             "type": "REPEAT",
@@ -518,7 +522,7 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "atom"
+                  "name": "ident"
                 }
               ]
             }
@@ -526,7 +530,54 @@
         ]
       }
     },
-    "_parametrized_object": {
+    "dereference": {
+      "type": "PREC",
+      "value": 26,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "ident"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "::"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "ident"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "_type_parameter": {
+      "type": "ALIAS",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "reference"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "dereference"
+          }
+        ]
+      },
+      "named": true,
+      "value": "type_parameter"
+    },
+    "_parametrized_type": {
       "type": "PREC",
       "value": 30,
       "content": {
@@ -545,6 +596,10 @@
                   {
                     "type": "STRING",
                     "value": "table"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "module"
                   }
                 ]
               },
@@ -561,13 +616,29 @@
             "type": "FIELD",
             "name": "type_parameter",
             "content": {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "reference"
-              },
-              "named": true,
-              "value": "type_parameter"
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_type_parameter"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_type_parameter"
+                      }
+                    ]
+                  }
+                }
+              ]
             }
           },
           {
@@ -577,7 +648,7 @@
         ]
       }
     },
-    "_parametrized_list": {
+    "_parametrized_type_list": {
       "type": "PREC",
       "value": 30,
       "content": {
@@ -651,11 +722,11 @@
           },
           {
             "type": "SYMBOL",
-            "name": "_parametrized_object"
+            "name": "_parametrized_type"
           },
           {
             "type": "SYMBOL",
-            "name": "_parametrized_list"
+            "name": "_parametrized_type_list"
           },
           {
             "type": "STRING",
@@ -664,6 +735,10 @@
           {
             "type": "STRING",
             "value": "table"
+          },
+          {
+            "type": "STRING",
+            "value": "module"
           }
         ]
       }
@@ -719,7 +794,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "atom"
+              "name": "ident"
             },
             "named": true,
             "value": "parameter_identifier"
@@ -760,7 +835,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "atom"
+              "name": "ident"
             },
             "named": true,
             "value": "schema_field_identifier"
@@ -816,8 +891,22 @@
           "type": "FIELD",
           "name": "key",
           "content": {
-            "type": "SYMBOL",
-            "name": "_property_name"
+            "type": "ALIAS",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "string"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "symbol"
+                }
+              ]
+            },
+            "named": true,
+            "value": "bind_pair_key"
           }
         },
         {
@@ -826,10 +915,31 @@
         },
         {
           "type": "FIELD",
-          "name": "value",
+          "name": "name",
           "content": {
-            "type": "SYMBOL",
-            "name": "_expression"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "ident"
+            },
+            "named": true,
+            "value": "bind_pair_identifier"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "type_annotation"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
         }
       ]
@@ -856,7 +966,7 @@
       "type": "ALIAS",
       "content": {
         "type": "SYMBOL",
-        "name": "atom"
+        "name": "ident"
       },
       "named": true,
       "value": "def_identifier"
@@ -1105,7 +1215,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "atom"
+                  "name": "ident"
                 },
                 {
                   "type": "BLANK"
@@ -1117,17 +1227,29 @@
       }
     },
     "event": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "@event"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "boolean"
-        }
-      ]
+      "type": "PREC_LEFT",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "@event"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "boolean"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
     },
     "meta": {
       "type": "PREC_LEFT",
@@ -1141,7 +1263,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "atom"
+            "name": "ident"
           }
         ]
       }
@@ -1164,17 +1286,8 @@
             "type": "FIELD",
             "name": "namespace",
             "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "string"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "symbol"
-                }
-              ]
+              "type": "SYMBOL",
+              "name": "_expression"
             }
           },
           {
@@ -1390,12 +1503,33 @@
             "value": "defconst"
           },
           {
-            "type": "FIELD",
-            "name": "name",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_def_name"
-            }
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "name",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_def_name"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "return_type",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "type_annotation"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                }
+              }
+            ]
           },
           {
             "type": "FIELD",
@@ -1606,7 +1740,7 @@
                       "type": "ALIAS",
                       "content": {
                         "type": "SYMBOL",
-                        "name": "atom"
+                        "name": "ident"
                       },
                       "named": true,
                       "value": "table_schema"
@@ -1657,7 +1791,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "atom"
+              "name": "ident"
             },
             "named": true,
             "value": "let_variable_identifier"
@@ -1936,7 +2070,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "atom"
+                  "name": "ident"
                 },
                 {
                   "type": "BLANK"
@@ -1981,7 +2115,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "atom"
+                  "name": "ident"
                 },
                 {
                   "type": "BLANK"
@@ -2171,7 +2305,7 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "atom"
+                "name": "ident"
               },
               "named": true,
               "value": "module_identifier"
@@ -2187,7 +2321,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "atom"
+                    "name": "ident"
                   },
                   {
                     "type": "SYMBOL",
@@ -2289,7 +2423,7 @@
             "name": "interface",
             "content": {
               "type": "SYMBOL",
-              "name": "atom"
+              "name": "reference"
             }
           },
           {
@@ -2366,7 +2500,7 @@
             "name": "table",
             "content": {
               "type": "SYMBOL",
-              "name": "atom"
+              "name": "reference"
             }
           },
           {
@@ -2374,7 +2508,7 @@
             "name": "key",
             "content": {
               "type": "SYMBOL",
-              "name": "atom"
+              "name": "_expression"
             }
           },
           {
@@ -2422,7 +2556,7 @@
             "name": "table",
             "content": {
               "type": "SYMBOL",
-              "name": "atom"
+              "name": "reference"
             }
           },
           {
@@ -2430,7 +2564,7 @@
             "name": "key",
             "content": {
               "type": "SYMBOL",
-              "name": "atom"
+              "name": "_expression"
             }
           },
           {
@@ -2486,7 +2620,7 @@
             "name": "src",
             "content": {
               "type": "SYMBOL",
-              "name": "reference"
+              "name": "_expression"
             }
           },
           {
@@ -2575,6 +2709,46 @@
             "content": {
               "type": "SYMBOL",
               "name": "_expression"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": ")"
+          }
+        ]
+      }
+    },
+    "lambda_expression": {
+      "type": "PREC",
+      "value": 10,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "("
+          },
+          {
+            "type": "STRING",
+            "value": "lambda"
+          },
+          {
+            "type": "FIELD",
+            "name": "parameters",
+            "content": {
+              "type": "SYMBOL",
+              "name": "parameter_list"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "body",
+            "content": {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_expression"
+              }
             }
           },
           {

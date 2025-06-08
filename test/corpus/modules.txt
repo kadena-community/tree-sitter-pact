@@ -43,7 +43,7 @@ Interface Definition
         (doc_string))
       body: (s_expression
         head: (s_expression_head
-          (atom))
+          (ident))
         tail: (boolean)
         tail: (string)))))
 
@@ -58,7 +58,7 @@ Use Statement
 (source_file
   (use
     module: (reference
-      (atom))))
+      (ident))))
 
 ==================
 Use Statement with Hash
@@ -71,7 +71,7 @@ Use Statement with Hash
 (source_file
   (use
     module: (reference
-      (atom))
+      (ident))
     hash: (string)))
 
 ==================
@@ -85,14 +85,14 @@ Use Statement with Imports
 (source_file
   (use
     module: (reference
-      (atom))
+      (ident))
     imports: (list
       (reference
-        (atom))
+        (ident))
       (reference
-        (atom))
+        (ident))
       (reference
-        (atom)))))
+        (ident)))))
 
 ==================
 Use Statement with Hash and Imports
@@ -105,12 +105,12 @@ Use Statement with Hash and Imports
 (source_file
   (use
     module: (reference
-      (atom))
+      (ident))
     hash: (string)
     imports: (list
       (reference
-        (atom))
+        (ident))
       (reference
-        (atom))
+        (ident))
       (reference
-        (atom)))))
+        (ident)))))

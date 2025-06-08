@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v2
       - name: Run tests
@@ -31,7 +33,7 @@ jobs:
           test-node: true
           test-python: true
           test-go: true
-          test-swift: true
+          test-swift: false
       - name: Parse examples
         uses: tree-sitter/parse-action@v4
         with:

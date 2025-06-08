@@ -27,10 +27,10 @@ defcap
         (doc
             (doc_string))
         (s_expression
-            (s_expression_head (atom))
+            (s_expression_head (ident))
         (s_expression
-            (s_expression_head (atom))
-            (reference (atom))
+            (s_expression_head (ident))
+            (reference (ident))
             (string))
         (string)))
     (defcap
@@ -64,10 +64,10 @@ complex
 )
 (source_file
     (module
-    (atom)
-    (atom)
+    (ident)
+    (ident)
     (defcap
-        (atom)
+        (ident)
         (type_identifier)
         (parameter_list
         (parameter
@@ -80,32 +80,32 @@ complex
             (parameter_identifier)
             (type_identifier)))
         (managed
-        (atom)
-        (atom))
+        (ident)
+        (ident))
         (s_expression
-        (atom)
+        (ident)
         (s_expression
-            (atom)
-            (atom)
-            (atom))
+            (ident)
+            (ident)
+            (ident))
         (string))
         (s_expression
-        (atom)
-        (atom))
+        (ident)
+        (ident))
         (s_expression
-        (atom)
+        (ident)
         (s_expression
-            (atom)
-            (atom)
+            (ident)
+            (ident)
             (decimal))
         (string))
         (s_expression
-        (atom)
+        (ident)
         (s_expression
-            (atom)
-            (atom)))
+            (ident)
+            (ident)))
         (s_expression
-        (atom)
+        (ident)
         (s_expression
-            (atom)
-            (atom))))))
+            (ident)
+            (ident))))))

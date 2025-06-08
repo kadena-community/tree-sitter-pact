@@ -37,26 +37,26 @@ let binding
             (let_variable_identifier))
           (s_expression
             (s_expression_head
-              (atom))
+              (ident))
             (reference
-              (atom))
+              (ident))
             (reference
-              (atom))))
+              (ident))))
         (s_expression
           (s_expression_head
-            (atom))
+            (ident))
           (s_expression
             (s_expression_head
-              (atom))
+              (ident))
             (reference
-              (atom))
+              (ident))
             (decimal))
           (s_expression
             (s_expression_head
-              (atom))
+              (ident))
             (string)
             (list
               (reference
-                (atom)))))
+                (ident)))))
         (reference
-          (atom))))))
+          (ident))))))

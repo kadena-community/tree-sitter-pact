@@ -14,13 +14,13 @@ Cond Expression
   (cond
     test: (s_expression
       head: (s_expression_head
-        (atom))
+        (ident))
       tail: (integer)
       tail: (integer))
     branch: (string)
     test: (s_expression
       head: (s_expression_head
-        (atom))
+        (ident))
       tail: (integer)
       tail: (integer))
     branch: (string)
@@ -53,6 +53,6 @@ Try Expression
     default: (integer)
     protected: (s_expression
       head: (s_expression_head
-        (atom))
+        (ident))
       tail: (boolean)
       tail: (string))))

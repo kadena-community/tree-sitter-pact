@@ -96,15 +96,15 @@ Defpact
 (source_file
   (s_expression
     head: (s_expression_head
-      (atom))
+      (ident))
     tail: (reference
-      (atom))
+      (ident))
     tail: (s_expression
       head: (s_expression_head
-        (atom)))
+        (ident)))
     tail: (s_expression
       head: (s_expression_head
-        (atom))
+        (ident))
       tail: (let_binding
         bind_pairs: (let_bind_pair
           (let_variable
@@ -112,14 +112,14 @@ Defpact
           value: (string))
         body: (s_expression
           head: (s_expression_head
-            (atom))
+            (ident))
           tail: (reference
-            (atom))
+            (ident))
           tail: (reference
-            (atom)))))
+            (ident)))))
     tail: (s_expression
       head: (s_expression_head
-        (atom))
+        (ident))
       tail: (let_binding
         bind_pairs: (let_bind_pair
           (let_variable
@@ -127,11 +127,11 @@ Defpact
           value: (string))
         body: (s_expression
           head: (s_expression_head
-            (atom))
+            (ident))
           tail: (reference
-            (atom))
+            (ident))
           tail: (reference
-            (atom))))
+            (ident))))
       tail: (let_binding
         bind_pairs: (let_bind_pair
           (let_variable
@@ -139,8 +139,8 @@ Defpact
           value: (string))
         body: (s_expression
           head: (s_expression_head
-            (atom))
+            (ident))
           tail: (reference
-            (atom))
+            (ident))
           tail: (reference
-            (atom)))))))
+            (ident)))))))

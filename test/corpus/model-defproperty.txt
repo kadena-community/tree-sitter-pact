@@ -24,12 +24,12 @@
         (def_identifier)
         (s_expression
           (s_expression_head
-            (atom))
+            (ident))
           (s_expression
             (s_expression_head
-              (atom))
+              (ident))
             (reference
-              (atom))
+              (ident))
             (symbol))
           (decimal)))
       (defproperty
@@ -41,22 +41,22 @@
               (type_identifier))))
         (s_expression
           (s_expression_head
-            (atom))
+            (ident))
           (s_expression
             (s_expression_head
-              (atom))
+              (ident))
             (s_expression
               (s_expression_head
-                (atom))
+                (ident))
               (reference
-                (atom)))
+                (ident)))
             (integer))
           (s_expression
             (s_expression_head
-              (atom))
+              (ident))
             (s_expression
               (s_expression_head
-                (atom))
+                (ident))
               (reference
-                (atom)))
+                (ident)))
             (integer)))))))

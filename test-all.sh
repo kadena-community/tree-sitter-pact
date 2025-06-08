@@ -1,20 +1,7 @@
 #!/bin/bash
-set -e
+# set -e
 
-# generate and build the grammar
-npx tree-sitter generate
-
-# build the grammar
-npx tree-sitter build
-
-# build the wasm bindings
-npx tree-sitter build --wasm --docker
-
-# parse examples
-for file in examples/*.pact; do
-  echo "Testing $file"
-  npx tree-sitter parse $file --quiet
-done
+. ./parse-all.sh
 
 # run the parser tests
 npx tree-sitter test

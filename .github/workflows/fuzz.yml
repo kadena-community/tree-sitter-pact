@@ -15,5 +15,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
       - name: Run fuzzer
         uses: tree-sitter/fuzz-action@v4
