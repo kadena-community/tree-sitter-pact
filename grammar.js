@@ -77,7 +77,7 @@ function listOf(rule) {
 /**
  * Creates a rule to match one or more of the rules separated by a comma
  *
- * @param {Rule|Rule[]} rules
+ * @param {(Rule | string)|(Rule | string)[]} rules
  */
 function withParens(rules) {
   const r = Array.isArray(rules) ? rules : [rules];
@@ -128,9 +128,10 @@ module.exports = grammar({
       ),
     // S-Expressions
     s_expression: ($) =>
-      withParens(
-        seq(field('head', alias($.reference, $.s_expression_head)), optional(field('tail', repeat($._expression)))),
-      ),
+      withParens([
+        field('head', alias($.reference, $.s_expression_head)),
+        optional(field('tail', repeat($._expression))),
+      ]),
 
     atom: () => ATOM,
     reference: ($) => prec(PREC.REFERENCE, seq($.atom, repeat(seq('.', $.atom)))),
@@ -195,21 +196,19 @@ module.exports = grammar({
       ),
 
     // special forms
-    pact_version: ($) => prec(PREC.SPECIAL_FORM, withParens(seq('pact-version', field('version', $.string)))),
+    pact_version: ($) => prec(PREC.SPECIAL_FORM, withParens(['pact-version', field('version', $.string)])),
     // <string> or @doc <string>
     doc: ($) => prec.right(PREC.DOC, choice(seq('@doc', alias($.string, $.doc_string)), alias($.string, $.doc_string))),
     model: ($) => seq('@model', '[', field('body', repeat(choice($.defproperty, $.s_expression))), ']'),
     defproperty: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        withParens(
-          seq(
-            'defproperty',
-            field('name', $._def_name),
-            optional(field('parameters', $.parameter_list)),
-            field('body', repeat($._expression)),
-          ),
-        ),
+        withParens([
+          'defproperty',
+          field('name', $._def_name),
+          optional(field('parameters', $.parameter_list)),
+          field('body', repeat($._expression)),
+        ]),
       ),
     managed: ($) =>
       prec.left(1, seq('@managed', field('args', optional($._literal)), field('manager', optional($.atom)))),
@@ -218,159 +217,134 @@ module.exports = grammar({
     // model: ($) => seq('@model', $._expression),
     // any other meta starts with @
     meta: ($) => prec.left(1, seq('@', $.atom)),
-    namespace: ($) => seq(PARENS_LEFT, 'namespace', field('namespace', choice($.string, $.symbol)), PARENS_RIGHT),
+    namespace: ($) =>
+      prec(PREC.SPECIAL_FORM, withParens(['namespace', field('namespace', choice($.string, $.symbol))])),
 
     // (bless HASH)
-    bless: ($) => seq(PARENS_LEFT, 'bless', field('hash', $.string), PARENS_RIGHT),
+    bless: ($) => prec(PREC.SPECIAL_FORM, withParens(['bless', field('hash', $.string)])),
 
     // (defun NAME ARGLIST [DOC-OR-META] BODY...)
     defun: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
+        withParens([
           'defun',
           seq(field('name', $._def_name), field('return_type', optional($.type_annotation))),
           field('parameters', $.parameter_list),
           optional($._doc_or_meta),
           field('body', repeat($._expression)),
-          PARENS_RIGHT,
-        ),
+        ]),
       ),
     // (defcap NAME ARGLIST [DOC] BODY...)
     defcap: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
+        withParens([
           'defcap',
           seq(field('name', $._def_name), field('return_type', optional($.type_annotation))),
           field('parameters', $.parameter_list),
           optional($._doc_or_meta),
           field('body', repeat($._expression)),
-          PARENS_RIGHT,
-        ),
+        ]),
       ),
     // (defconst NAME VALUE [DOC-OR-META])
     defconst: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
-          'defconst',
-          field('name', $._def_name),
-          field('body', $._expression),
-          optional($._doc_or_meta),
-          PARENS_RIGHT,
-        ),
+        withParens(['defconst', field('name', $._def_name), field('body', $._expression), optional($._doc_or_meta)]),
       ),
     // (defpact NAME ARGLIST [DOC-OR-META] STEPS...)
     defpact: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
+        withParens([
           'defpact',
           seq(field('name', $._def_name), field('return_type', optional($.type_annotation))),
           field('parameters', $.parameter_list),
           optional($._doc_or_meta),
           field('body', repeat(choice($.step, $.step_with_rollback))),
-          PARENS_RIGHT,
-        ),
+        ]),
       ),
     // (defschema NAME [DOC-OR-META] FIELDS...)
     defschema: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
+        withParens([
           'defschema',
           field('name', $._def_name),
           optional($._doc_or_meta),
           field('fields', $.schema_field_list),
-          PARENS_RIGHT,
-        ),
+        ]),
       ),
     // (deftable NAME[:SCHEMA] [DOC-OR-META])
     deftable: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
+        withParens([
           'deftable',
           choice(
             seq(field('name', $._def_name), ':', '{', field('schema', alias($.atom, $.table_schema)), '}'),
             field('name', $._def_name),
           ),
           optional($._doc_or_meta),
-          PARENS_RIGHT,
-        ),
+        ]),
       ),
     let_variable: ($) =>
       seq(field('name', alias($.atom, $.let_variable_identifier)), field('type', optional($.type_annotation))),
-    let_bind_pair: ($) => seq(PARENS_LEFT, $.let_variable, field('value', $._expression), PARENS_RIGHT),
+    let_bind_pair: ($) => withParens([$.let_variable, field('value', $._expression)]),
 
     // (let (BINDPAIR [BINDPAIR [...]]) BODY)
     // (let* (BINDPAIR [BINDPAIR [...]]) BODY)
     let_binding: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
+        withParens([
           choice('let', 'let*'),
-          field('bind_pairs', seq(PARENS_LEFT, repeat($.let_bind_pair), PARENS_RIGHT)),
+          field('bind_pairs', withParens(repeat($.let_bind_pair))),
           field('body', repeat($._expression)),
-          PARENS_RIGHT,
-        ),
+        ]),
       ),
     // (cond (TEST BRANCH) [(TEST2 BRANCH2) [...]] ELSE-BRANCH)
     cond: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
+        withParens([
           'cond',
-          repeat(seq(PARENS_LEFT, field('test', $._expression), field('branch', $._expression), PARENS_RIGHT)),
+          repeat(withParens([field('test', $._expression), field('branch', $._expression)])),
           field('else_branch', $._expression),
-          PARENS_RIGHT,
-        ),
+        ]),
       ),
     // (if CONDITION THEN ELSE)
     if_expression: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        withParens(
-          seq('if', field('condition', $._expression), field('then', $._expression), field('else', $._expression)),
-        ),
+        withParens([
+          'if',
+          field('condition', $._expression),
+          field('then', $._expression),
+          field('else', $._expression),
+        ]),
       ),
 
     // (try DEFAULT PROTECTED)
     try_expression: ($) =>
-      prec(
-        PREC.SPECIAL_FORM,
-        withParens(seq('try', field('default', $._expression), field('protected', $._expression))),
-      ),
+      prec(PREC.SPECIAL_FORM, withParens(['try', field('default', $._expression), field('protected', $._expression)])),
 
     // (step EXPR)
     // (step ENTITY EXPR)
     step: ($) =>
-      prec(
-        PREC.SPECIAL_FORM,
-        seq(PARENS_LEFT, 'step', field('entity', optional($.atom)), field('expr', $._expression), PARENS_RIGHT),
-      ),
+      prec(PREC.SPECIAL_FORM, withParens(['step', field('entity', optional($.atom)), field('expr', $._expression)])),
     // (step-with-rollback EXPR ROLLBACK-EXPR)
     // (step-with-rollback ENTITY EXPR ROLLBACK-EXPR)
     step_with_rollback: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
+        withParens([
           'step-with-rollback',
           field('entity', optional($.atom)),
           field('expr', $._expression),
           field('rollback_expr', $._expression),
-          PARENS_RIGHT,
-        ),
+        ]),
       ),
     // (use MODULE)
     // (use MODULE HASH)
@@ -379,34 +353,29 @@ module.exports = grammar({
     use: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        withParens(
-          seq(
-            'use',
-            field('module', $.reference),
-            optional(field('hash', $.string)),
-            optional(field('imports', $.list)),
-          ),
-        ),
+        withParens([
+          'use',
+          field('module', $.reference),
+          optional(field('hash', $.string)),
+          optional(field('imports', $.list)),
+        ]),
       ),
     // (interface NAME [DOR-OR-META] BODY...)
     interface: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
+        withParens([
           'interface',
           field('name', $._def_name),
           optional($._doc_or_meta),
           field('body', repeat(choice($.defun, $.defconst, $.defschema, $.defpact, $.defcap, $.use))),
-          PARENS_RIGHT,
-        ),
+        ]),
       ),
     // (module NAME KEYSET-OR-GOVERNANCE [DOC-OR-META] BODY...)
     module: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(
-          PARENS_LEFT,
+        withParens([
           'module',
           field('name', alias($.atom, $.module_identifier)),
           field('governance', alias(choice($.atom, $.string, $.symbol), $.module_governance)),
@@ -417,19 +386,19 @@ module.exports = grammar({
               choice($.bless, $.use, $.implements, $.defun, $.defconst, $.defschema, $.defpact, $.defcap, $.deftable),
             ),
           ),
-          PARENS_RIGHT,
-        ),
+        ]),
       ),
     // (implements INTERFACE)
-    implements: ($) =>
-      prec(PREC.SPECIAL_FORM, seq(PARENS_LEFT, 'implements', field('interface', $.atom), PARENS_RIGHT)),
+    implements: ($) => prec(PREC.SPECIAL_FORM, withParens(['implements', field('interface', $.atom)])),
     // (with-capability CAPABILITY [ANY...])
     with_capability: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        withParens(
-          seq('with-capability', field('capability', $.s_expression), optional(field('body', repeat($._expression)))),
-        ),
+        withParens([
+          'with-capability',
+          field('capability', $.s_expression),
+          optional(field('body', repeat($._expression))),
+        ]),
       ),
 
     // (with-read TABLE KEY BINDINGS BODY...)
@@ -437,15 +406,13 @@ module.exports = grammar({
     with_read: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        withParens(
-          seq(
-            'with-read',
-            field('table', $.atom),
-            field('key', $.atom),
-            field('bindings', $.bindings),
-            field('body', repeat($._expression)),
-          ),
-        ),
+        withParens([
+          'with-read',
+          field('table', $.atom),
+          field('key', $.atom),
+          field('bindings', $.bindings),
+          field('body', repeat($._expression)),
+        ]),
       ),
 
     // (with-default-read TABLE KEY DEFAULT BINDINGS BODY...)
@@ -453,36 +420,37 @@ module.exports = grammar({
     with_default_read: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        withParens(
-          seq(
-            'with-default-read',
-            field('table', $.atom),
-            field('key', $.atom),
-            field('default', $.object),
-            field('bindings', $.bindings),
-            field('body', repeat($._expression)),
-          ),
-        ),
+        withParens([
+          'with-default-read',
+          field('table', $.atom),
+          field('key', $.atom),
+          field('default', $.object),
+          field('bindings', $.bindings),
+          field('body', repeat($._expression)),
+        ]),
       ),
 
     // (bind SRC BINDINGS BODY...)
     bind: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        withParens(
-          seq('bind', field('src', $.reference), field('bindings', $.bindings), field('body', repeat($._expression))),
-        ),
+        withParens([
+          'bind',
+          field('src', $.reference),
+          field('bindings', $.bindings),
+          field('body', repeat($._expression)),
+        ]),
       ),
 
     // (resume BINDINGS BODY...)
     resume: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        withParens(seq('resume', field('bindings', $.bindings), field('body', repeat($._expression)))),
+        withParens(['resume', field('bindings', $.bindings), field('body', repeat($._expression))]),
       ),
 
     // (emit-event CAPABILITY)
     // eg (emit-event (TRANSFER "" account balance))
-    emit_event: ($) => prec(PREC.SPECIAL_FORM, withParens(seq('emit-event', field('capability', $._expression)))),
+    emit_event: ($) => prec(PREC.SPECIAL_FORM, withParens(['emit-event', field('capability', $._expression)])),
   },
 });
