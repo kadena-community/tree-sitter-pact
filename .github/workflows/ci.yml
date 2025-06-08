@@ -37,4 +37,4 @@ jobs:
       - name: Parse examples
         uses: tree-sitter/parse-action@v4
         with:
-          files: examples/*
+          files: examples/**/*.{pact,repl}
