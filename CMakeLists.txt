@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(tree-sitter-pact
-        VERSION "0.0.9"
+        VERSION "0.0.10"
         DESCRIPTION "Pact grammar for tree-sitter"
         HOMEPAGE_URL "https://github.com/tree-sitter/tree-sitter-pact"
         LANGUAGES C)

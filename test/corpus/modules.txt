@@ -6,11 +6,111 @@ Module
     (defcap G() true)
 )
 ---
+
 (source_file
-    (module
-        (module_identifier)
-        (module_governance)
-        (defcap
-            (def_identifier)
-            (parameter_list)
-            (boolean))))
+  (module
+    (module_identifier)
+    (module_governance)
+    (defcap
+      (def_identifier)
+      (parameter_list)
+      (boolean))))
+
+==================
+Interface Definition
+==================
+
+(interface my-interface
+  (defun my-fun (a: integer)
+    @doc "This is a docstring"
+    (enforce false "not implemented")
+  )
+)
+
+---
+
+(source_file
+  (interface
+    name: (def_identifier)
+    body: (defun
+      name: (def_identifier)
+      parameters: (parameter_list
+        (parameter
+          name: (parameter_identifier)
+          type: (type_annotation
+            (type_identifier))))
+      doc: (doc
+        (doc_string))
+      body: (s_expression
+        head: (s_expression_head
+          (atom))
+        tail: (boolean)
+        tail: (string)))))
+
+==================
+Use Statement
+==================
+
+(use my-module)
+
+---
+
+(source_file
+  (use
+    module: (reference
+      (atom))))
+
+==================
+Use Statement with Hash
+==================
+
+(use my-module "my-hash")
+
+---
+
+(source_file
+  (use
+    module: (reference
+      (atom))
+    hash: (string)))
+
+==================
+Use Statement with Imports
+==================
+
+(use my-module [a, b, c])
+
+---
+
+(source_file
+  (use
+    module: (reference
+      (atom))
+    imports: (list
+      (reference
+        (atom))
+      (reference
+        (atom))
+      (reference
+        (atom)))))
+
+==================
+Use Statement with Hash and Imports
+==================
+
+(use my-module "my-hash" [a, b, c])
+
+---
+
+(source_file
+  (use
+    module: (reference
+      (atom))
+    hash: (string)
+    imports: (list
+      (reference
+        (atom))
+      (reference
+        (atom))
+      (reference
+        (atom)))))

@@ -1,5 +1,127 @@
 [
   {
+    "type": "_expression",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "atom",
+        "named": true
+      },
+      {
+        "type": "bind",
+        "named": true
+      },
+      {
+        "type": "boolean",
+        "named": true
+      },
+      {
+        "type": "cond",
+        "named": true
+      },
+      {
+        "type": "decimal",
+        "named": true
+      },
+      {
+        "type": "emit_event",
+        "named": true
+      },
+      {
+        "type": "if_expression",
+        "named": true
+      },
+      {
+        "type": "integer",
+        "named": true
+      },
+      {
+        "type": "let_binding",
+        "named": true
+      },
+      {
+        "type": "list",
+        "named": true
+      },
+      {
+        "type": "object",
+        "named": true
+      },
+      {
+        "type": "reference",
+        "named": true
+      },
+      {
+        "type": "resume",
+        "named": true
+      },
+      {
+        "type": "s_expression",
+        "named": true
+      },
+      {
+        "type": "string",
+        "named": true
+      },
+      {
+        "type": "symbol",
+        "named": true
+      },
+      {
+        "type": "try_expression",
+        "named": true
+      },
+      {
+        "type": "with_capability",
+        "named": true
+      },
+      {
+        "type": "with_default_read",
+        "named": true
+      },
+      {
+        "type": "with_read",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "bind",
+    "named": true,
+    "fields": {
+      "bindings": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "bindings",
+            "named": true
+          }
+        ]
+      },
+      "body": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "src": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "reference",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "bind_pair",
     "named": true,
     "fields": {
@@ -18,55 +140,26 @@
         "required": true,
         "types": [
           {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
       }
+    }
+  },
+  {
+    "type": "bindings",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "bind_pair",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -94,51 +187,7 @@
         "required": false,
         "types": [
           {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -148,51 +197,7 @@
         "required": true,
         "types": [
           {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -202,7 +207,7 @@
         "required": false,
         "types": [
           {
-            "type": "s_expression",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -218,51 +223,7 @@
         "required": false,
         "types": [
           {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -358,51 +319,7 @@
         "required": true,
         "types": [
           {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -578,51 +495,7 @@
         "required": false,
         "types": [
           {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -791,7 +664,7 @@
       },
       "schema": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "table_schema",
@@ -810,51 +683,7 @@
         "required": false,
         "types": [
           {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -957,6 +786,22 @@
     }
   },
   {
+    "type": "emit_event",
+    "named": true,
+    "fields": {
+      "capability": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "event",
     "named": true,
     "fields": {},
@@ -969,6 +814,42 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "if_expression",
+    "named": true,
+    "fields": {
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "else": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "then": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -1092,51 +973,7 @@
         "required": true,
         "types": [
           {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -1180,51 +1017,7 @@
         "required": false,
         "types": [
           {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -1266,51 +1059,7 @@
       "required": false,
       "types": [
         {
-          "type": "atom",
-          "named": true
-        },
-        {
-          "type": "boolean",
-          "named": true
-        },
-        {
-          "type": "cond",
-          "named": true
-        },
-        {
-          "type": "decimal",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "let_binding",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "object",
-          "named": true
-        },
-        {
-          "type": "reference",
-          "named": true
-        },
-        {
-          "type": "s_expression",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "symbol",
+          "type": "_expression",
           "named": true
         }
       ]
@@ -1556,14 +1305,26 @@
       "required": false,
       "types": [
         {
-          "type": "bind_pair",
-          "named": true
-        },
-        {
           "type": "pair",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "pact_version",
+    "named": true,
+    "fields": {
+      "version": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -1585,51 +1346,7 @@
         "required": true,
         "types": [
           {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -1693,6 +1410,32 @@
     }
   },
   {
+    "type": "resume",
+    "named": true,
+    "fields": {
+      "bindings": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "bindings",
+            "named": true
+          }
+        ]
+      },
+      "body": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "s_expression",
     "named": true,
     "fields": {
@@ -1711,51 +1454,7 @@
         "required": false,
         "types": [
           {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -1828,6 +1527,18 @@
       "required": false,
       "types": [
         {
+          "type": "_expression",
+          "named": true
+        },
+        {
+          "type": "defconst",
+          "named": true
+        },
+        {
+          "type": "defun",
+          "named": true
+        },
+        {
           "type": "interface",
           "named": true
         },
@@ -1840,7 +1551,7 @@
           "named": true
         },
         {
-          "type": "s_expression",
+          "type": "pact_version",
           "named": true
         },
         {
@@ -1869,51 +1580,7 @@
         "required": true,
         "types": [
           {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -1939,51 +1606,7 @@
         "required": true,
         "types": [
           {
-            "type": "atom",
-            "named": true
-          },
-          {
-            "type": "boolean",
-            "named": true
-          },
-          {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -1993,51 +1616,33 @@
         "required": true,
         "types": [
           {
-            "type": "atom",
+            "type": "_expression",
             "named": true
-          },
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "try_expression",
+    "named": true,
+    "fields": {
+      "default": {
+        "multiple": false,
+        "required": true,
+        "types": [
           {
-            "type": "boolean",
+            "type": "_expression",
             "named": true
-          },
+          }
+        ]
+      },
+      "protected": {
+        "multiple": false,
+        "required": true,
+        "types": [
           {
-            "type": "cond",
-            "named": true
-          },
-          {
-            "type": "decimal",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "let_binding",
-            "named": true
-          },
-          {
-            "type": "list",
-            "named": true
-          },
-          {
-            "type": "object",
-            "named": true
-          },
-          {
-            "type": "reference",
-            "named": true
-          },
-          {
-            "type": "s_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "symbol",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -2138,6 +1743,134 @@
     }
   },
   {
+    "type": "with_capability",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "capability": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "s_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "with_default_read",
+    "named": true,
+    "fields": {
+      "bindings": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "bindings",
+            "named": true
+          }
+        ]
+      },
+      "body": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "default": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "object",
+            "named": true
+          }
+        ]
+      },
+      "key": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "atom",
+            "named": true
+          }
+        ]
+      },
+      "table": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "atom",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "with_read",
+    "named": true,
+    "fields": {
+      "bindings": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "bindings",
+            "named": true
+          }
+        ]
+      },
+      "body": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "key": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "atom",
+            "named": true
+          }
+        ]
+      },
+      "table": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "atom",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "(",
     "named": false
   },
@@ -2194,6 +1927,10 @@
     "named": true
   },
   {
+    "type": "bind",
+    "named": false
+  },
+  {
     "type": "bless",
     "named": false
   },
@@ -2207,7 +1944,8 @@
   },
   {
     "type": "comment",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "cond",
@@ -2215,11 +1953,11 @@
   },
   {
     "type": "decimal",
-    "named": true
+    "named": false
   },
   {
     "type": "decimal",
-    "named": false
+    "named": true
   },
   {
     "type": "def_identifier",
@@ -2258,7 +1996,15 @@
     "named": true
   },
   {
+    "type": "emit-event",
+    "named": false
+  },
+  {
     "type": "guard",
+    "named": false
+  },
+  {
+    "type": "if",
     "named": false
   },
   {
@@ -2267,11 +2013,11 @@
   },
   {
     "type": "integer",
-    "named": false
+    "named": true
   },
   {
     "type": "integer",
-    "named": true
+    "named": false
   },
   {
     "type": "interface",
@@ -2318,12 +2064,20 @@
     "named": false
   },
   {
+    "type": "pact-version",
+    "named": false
+  },
+  {
     "type": "parameter_identifier",
     "named": true
   },
   {
     "type": "property_identifier",
     "named": true
+  },
+  {
+    "type": "resume",
+    "named": false
   },
   {
     "type": "schema_field_identifier",
@@ -2362,11 +2116,27 @@
     "named": false
   },
   {
+    "type": "try",
+    "named": false
+  },
+  {
     "type": "use",
     "named": false
   },
   {
     "type": "value",
+    "named": false
+  },
+  {
+    "type": "with-capability",
+    "named": false
+  },
+  {
+    "type": "with-default-read",
+    "named": false
+  },
+  {
+    "type": "with-read",
     "named": false
   },
   {

@@ -1,0 +1,58 @@
+==================
+Cond Expression
+==================
+
+(cond
+  ((> 2 3) "nope")
+  ((> 3 2) "yep")
+  "default"
+)
+
+---
+
+(source_file
+  (cond
+    test: (s_expression
+      head: (s_expression_head
+        (atom))
+      tail: (integer)
+      tail: (integer))
+    branch: (string)
+    test: (s_expression
+      head: (s_expression_head
+        (atom))
+      tail: (integer)
+      tail: (integer))
+    branch: (string)
+    else_branch: (string)))
+
+==================
+If Expression
+==================
+
+(if true 1 2)
+
+---
+
+(source_file
+  (if_expression
+    condition: (boolean)
+    then: (integer)
+    else: (integer)))
+
+==================
+Try Expression
+==================
+
+(try 1 (enforce false "error"))
+
+---
+
+(source_file
+  (try_expression
+    default: (integer)
+    protected: (s_expression
+      head: (s_expression_head
+        (atom))
+      tail: (boolean)
+      tail: (string))))

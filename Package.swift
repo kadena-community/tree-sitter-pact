@@ -11,38 +11,14 @@ let package = Package(
         .library(name: "TreeSitterPact", targets: ["TreeSitterPact"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ChimeHQ/SwiftTreeSitter", branch: "main")
+        .package(url: "https://github.com/tree-sitter/swift-tree-sitter", branch: "main")
     ],
     targets: [
         .target(
             name: "TreeSitterPact",
             path: ".",
-            exclude: [
-                "Cargo.toml",
-                "Makefile",
-                "binding.gyp",
-                "bindings/c",
-                "bindings/go",
-                "bindings/node",
-                "bindings/python",
-                "bindings/rust",
-                "prebuilds",
-                "grammar.js",
-                "package.json",
-                "package-lock.json",
-                "pyproject.toml",
-                "setup.py",
-                "test",
-                "examples",
-                ".editorconfig",
-                ".github",
-                ".gitignore",
-                ".gitattributes",
-                ".gitmodules",
-            ],
             sources: [
                 "src/parser.c"
-                // NOTE: if your language has an external scanner, add it here.
             ],
             resources: [
                 .copy("queries")
@@ -53,7 +29,7 @@ let package = Package(
         .testTarget(
             name: "TreeSitterPactTests",
             dependencies: [
-                "SwiftTreeSitter",
+                .product(name: "SwiftTreeSitter", package: "swift-tree-sitter"),
                 "TreeSitterPact",
             ],
             path: "bindings/swift/TreeSitterPactTests"

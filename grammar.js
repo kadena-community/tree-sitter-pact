@@ -1,11 +1,12 @@
-// @ts-nocheck
+/// <reference types="tree-sitter-cli/dsl" />
+// @ts-check
 const PARENS_LEFT = '(';
 const PARENS_RIGHT = ')';
 const ATOM = token(/[a-zA-Z%#+\-_&$@<>=?*!|/][a-zA-Z0-9%#+\-_&$@<>=?*!|/]*/);
 
-const WHITESPACE = /[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]/;
+const WHITESPACE = /[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]/u;
 // comments start with a semicolon and end with a newline
-//
+
 const COMMENT = token(seq(';', /.*/));
 const INTEGER = token(seq(optional('-'), /\d+/));
 const DECIMAL = token(seq(optional('-'), /\d+\.\d+/));
@@ -17,7 +18,7 @@ const STRING = token(
       choice(
         /[^"\\]+/, // Match any character except double quote or backslash
         /\\./, // Match escaped characters (e.g., \n, \", \\)
-        /\\\n[\s\S]*/, // Match backslash followed by newline and then any character, including newlines
+        /\\\r?\n/, // Match an escaped newline.
       ),
     ),
     '"', // Ending double quote
@@ -26,8 +27,10 @@ const STRING = token(
 
 const SYMBOL = token(
   seq(
+    // eslint-disable-next-line quotes
     "'", // Starting with an apostrophe
 
+    // oxlint-disable-next-line no-useless-escape
     /[^\s\t\n\r,:."'\[\]()]+/, // Continuing with characters that are not whitespace or specified punctuation
   ),
 );
@@ -36,6 +39,9 @@ const PREC = {
   DOC: 20,
   SPECIAL_FORM: 10,
   LITERAL: 15,
+  TYPE_IDENTIFIER: 20,
+  REFERENCE: 25,
+  PARAMETERIZED: 30,
 };
 
 /**
@@ -62,7 +68,7 @@ function commaSep(rule) {
  * Creates a rule to match one or more of the rules separated by a comma
  *
  * @param {Rule} rule
- * @returns {SeqRule}
+ * @returns {ChoiceRule}
  */
 function listOf(rule) {
   return choice(seq('[', repeat(rule), ']'), seq('[', commaSep(rule), ']'));
@@ -82,11 +88,14 @@ module.exports = grammar({
   name: 'pact',
   extras: ($) => [$.comment, WHITESPACE],
   conflicts: ($) => [[$.list]],
-  // supertypes: ($) => [$.s_expression],
+  supertypes: ($) => [$._expression],
   word: ($) => $.atom,
   rules: {
-    source_file: ($) => repeat(choice($.namespace, $.s_expression, $.use, $.module, $.interface)),
+    source_file: ($) => repeat(choice($._top_level, $._expression)),
     comment: () => COMMENT,
+
+    // top level forms
+    _top_level: ($) => choice($.pact_version, $.namespace, $.use, $.module, $.interface, $.defconst, $.defun),
 
     // literals
     integer: () => INTEGER,
@@ -94,24 +103,42 @@ module.exports = grammar({
     string: () => STRING,
     boolean: () => BOOLEAN,
     symbol: () => SYMBOL,
-    list: ($) => listOf($._from),
-    object: ($) => seq('{', commaSep(choice($.pair, $.bind_pair)), '}'),
+    list: ($) => listOf($._expression),
+    object: ($) => seq('{', commaSep($.pair), '}'),
+    bindings: ($) => seq('{', commaSep($.bind_pair), '}'),
     _literal: ($) =>
       prec(
         PREC.LITERAL,
         choice($.boolean, $.integer, $.decimal, $.string, $.list, $.object, $.symbol, $.atom, $.reference),
       ),
-    _from: ($) => prec.left(PREC.LITERAL, choice($._literal, $.let_binding, $.cond, $.s_expression)),
+    _expression: ($) =>
+      choice(
+        $._literal,
+        $.let_binding,
+        $.if_expression,
+        $.try_expression,
+        $.cond,
+        $.emit_event,
+        $.with_capability,
+        $.with_read,
+        $.with_default_read,
+        $.bind,
+        $.resume,
+        $.s_expression,
+      ),
     // S-Expressions
     s_expression: ($) =>
-      withParens(seq(field('head', alias($.reference, $.s_expression_head)), optional(field('tail', repeat($._from))))),
+      withParens(
+        seq(field('head', alias($.reference, $.s_expression_head)), optional(field('tail', repeat($._expression)))),
+      ),
+
     atom: () => ATOM,
-    reference: ($) => prec(20, seq($.atom, repeat(seq('.', $.atom)))),
+    reference: ($) => prec(PREC.REFERENCE, seq($.atom, repeat(seq('.', $.atom)))),
     // _delimiter: ($) => choice(".", ",", ":", "::"),
     // object{type_parameter}, table{type_parameter}
     _parametrized_object: ($) =>
       prec(
-        40,
+        PREC.PARAMETERIZED,
         seq(
           optional(choice('object', 'table')),
           '{',
@@ -121,10 +148,10 @@ module.exports = grammar({
       ),
     // [object{type_parameter}]
     _parametrized_list: ($) =>
-      prec(40, seq('[', field('type_parameter', alias($.type_identifier, $.type_parameter)), ']')),
+      prec(PREC.PARAMETERIZED, seq('[', field('type_parameter', alias($.type_identifier, $.type_parameter)), ']')),
     type_identifier: ($) =>
       prec.left(
-        20,
+        PREC.TYPE_IDENTIFIER,
         choice(
           'integer',
           'decimal',
@@ -148,8 +175,8 @@ module.exports = grammar({
     schema_field_list: ($) => repeat1($.schema_field),
     schema_field: ($) =>
       seq(field('name', alias($.atom, $.schema_field_identifier)), field('type', optional($.type_annotation))),
-    pair: ($) => seq(field('key', $._property_name), ':', field('value', $._from)),
-    bind_pair: ($) => seq(field('key', $._property_name), ':=', field('value', $._from)),
+    pair: ($) => seq(field('key', $._property_name), ':', field('value', $._expression)),
+    bind_pair: ($) => seq(field('key', $._property_name), ':=', field('value', $._expression)),
 
     _property_name: ($) => alias(choice($.string, $.symbol), $.property_identifier),
     _def_name: ($) => alias($.atom, $.def_identifier),
@@ -168,6 +195,7 @@ module.exports = grammar({
       ),
 
     // special forms
+    pact_version: ($) => prec(PREC.SPECIAL_FORM, withParens(seq('pact-version', field('version', $.string)))),
     // <string> or @doc <string>
     doc: ($) => prec.right(PREC.DOC, choice(seq('@doc', alias($.string, $.doc_string)), alias($.string, $.doc_string))),
     model: ($) => seq('@model', '[', field('body', repeat(choice($.defproperty, $.s_expression))), ']'),
@@ -179,19 +207,19 @@ module.exports = grammar({
             'defproperty',
             field('name', $._def_name),
             optional(field('parameters', $.parameter_list)),
-            field('body', repeat($._from)),
+            field('body', repeat($._expression)),
           ),
         ),
       ),
     managed: ($) =>
       prec.left(1, seq('@managed', field('args', optional($._literal)), field('manager', optional($.atom)))),
     event: ($) => seq('@event', $.boolean),
+    // @model  <sexpr>
+    // model: ($) => seq('@model', $._expression),
     // any other meta starts with @
     meta: ($) => prec.left(1, seq('@', $.atom)),
     namespace: ($) => seq(PARENS_LEFT, 'namespace', field('namespace', choice($.string, $.symbol)), PARENS_RIGHT),
 
-    // @model  <sexpr>
-    // model: ($) => seq("@model", $._from),
     // (bless HASH)
     bless: ($) => seq(PARENS_LEFT, 'bless', field('hash', $.string), PARENS_RIGHT),
 
@@ -205,7 +233,7 @@ module.exports = grammar({
           seq(field('name', $._def_name), field('return_type', optional($.type_annotation))),
           field('parameters', $.parameter_list),
           optional($._doc_or_meta),
-          field('body', repeat($._from)),
+          field('body', repeat($._expression)),
           PARENS_RIGHT,
         ),
       ),
@@ -219,7 +247,7 @@ module.exports = grammar({
           seq(field('name', $._def_name), field('return_type', optional($.type_annotation))),
           field('parameters', $.parameter_list),
           optional($._doc_or_meta),
-          field('body', repeat($._from)),
+          field('body', repeat($._expression)),
           PARENS_RIGHT,
         ),
       ),
@@ -231,7 +259,7 @@ module.exports = grammar({
           PARENS_LEFT,
           'defconst',
           field('name', $._def_name),
-          field('body', $._from),
+          field('body', $._expression),
           optional($._doc_or_meta),
           PARENS_RIGHT,
         ),
@@ -270,14 +298,17 @@ module.exports = grammar({
         seq(
           PARENS_LEFT,
           'deftable',
-          seq(field('name', $._def_name), ':', '{', field('schema', alias($.atom, $.table_schema)), '}'),
+          choice(
+            seq(field('name', $._def_name), ':', '{', field('schema', alias($.atom, $.table_schema)), '}'),
+            field('name', $._def_name),
+          ),
           optional($._doc_or_meta),
           PARENS_RIGHT,
         ),
       ),
     let_variable: ($) =>
       seq(field('name', alias($.atom, $.let_variable_identifier)), field('type', optional($.type_annotation))),
-    let_bind_pair: ($) => seq(PARENS_LEFT, $.let_variable, field('value', $._from), PARENS_RIGHT),
+    let_bind_pair: ($) => seq(PARENS_LEFT, $.let_variable, field('value', $._expression), PARENS_RIGHT),
 
     // (let (BINDPAIR [BINDPAIR [...]]) BODY)
     // (let* (BINDPAIR [BINDPAIR [...]]) BODY)
@@ -288,7 +319,7 @@ module.exports = grammar({
           PARENS_LEFT,
           choice('let', 'let*'),
           field('bind_pairs', seq(PARENS_LEFT, repeat($.let_bind_pair), PARENS_RIGHT)),
-          field('body', repeat($._from)),
+          field('body', repeat($._expression)),
           PARENS_RIGHT,
         ),
       ),
@@ -299,17 +330,33 @@ module.exports = grammar({
         seq(
           PARENS_LEFT,
           'cond',
-          repeat(seq(PARENS_LEFT, field('test', $.s_expression), field('branch', $._from), PARENS_RIGHT)),
-          field('else_branch', $._from),
+          repeat(seq(PARENS_LEFT, field('test', $._expression), field('branch', $._expression), PARENS_RIGHT)),
+          field('else_branch', $._expression),
           PARENS_RIGHT,
         ),
       ),
+    // (if CONDITION THEN ELSE)
+    if_expression: ($) =>
+      prec(
+        PREC.SPECIAL_FORM,
+        withParens(
+          seq('if', field('condition', $._expression), field('then', $._expression), field('else', $._expression)),
+        ),
+      ),
+
+    // (try DEFAULT PROTECTED)
+    try_expression: ($) =>
+      prec(
+        PREC.SPECIAL_FORM,
+        withParens(seq('try', field('default', $._expression), field('protected', $._expression))),
+      ),
+
     // (step EXPR)
     // (step ENTITY EXPR)
     step: ($) =>
       prec(
         PREC.SPECIAL_FORM,
-        seq(PARENS_LEFT, 'step', field('entity', optional($.atom)), field('expr', $._from), PARENS_RIGHT),
+        seq(PARENS_LEFT, 'step', field('entity', optional($.atom)), field('expr', $._expression), PARENS_RIGHT),
       ),
     // (step-with-rollback EXPR ROLLBACK-EXPR)
     // (step-with-rollback ENTITY EXPR ROLLBACK-EXPR)
@@ -320,8 +367,8 @@ module.exports = grammar({
           PARENS_LEFT,
           'step-with-rollback',
           field('entity', optional($.atom)),
-          field('expr', $._from),
-          field('rollback_expr', $._from),
+          field('expr', $._expression),
+          field('rollback_expr', $._expression),
           PARENS_RIGHT,
         ),
       ),
@@ -336,7 +383,8 @@ module.exports = grammar({
           seq(
             'use',
             field('module', $.reference),
-            optional(choice(seq(field('hash', $.string), field('imports', $.list)), field('imports', $.list))),
+            optional(field('hash', $.string)),
+            optional(field('imports', $.list)),
           ),
         ),
       ),
@@ -375,5 +423,66 @@ module.exports = grammar({
     // (implements INTERFACE)
     implements: ($) =>
       prec(PREC.SPECIAL_FORM, seq(PARENS_LEFT, 'implements', field('interface', $.atom), PARENS_RIGHT)),
+    // (with-capability CAPABILITY [ANY...])
+    with_capability: ($) =>
+      prec(
+        PREC.SPECIAL_FORM,
+        withParens(
+          seq('with-capability', field('capability', $.s_expression), optional(field('body', repeat($._expression)))),
+        ),
+      ),
+
+    // (with-read TABLE KEY BINDINGS BODY...)
+    // eg (with-read accounts id { "balance":= bal, "currency":= ccy } (format "Balance for {} is {} {}" [id bal ccy]))
+    with_read: ($) =>
+      prec(
+        PREC.SPECIAL_FORM,
+        withParens(
+          seq(
+            'with-read',
+            field('table', $.atom),
+            field('key', $.atom),
+            field('bindings', $.bindings),
+            field('body', repeat($._expression)),
+          ),
+        ),
+      ),
+
+    // (with-default-read TABLE KEY DEFAULT BINDINGS BODY...)
+    // eg (with-default-read accounts id { "balance": 0, "currency": "USD" } { "balance":= bal, "currency":= currency } (format "Balance for {} is {} {}" [id bal currency]))
+    with_default_read: ($) =>
+      prec(
+        PREC.SPECIAL_FORM,
+        withParens(
+          seq(
+            'with-default-read',
+            field('table', $.atom),
+            field('key', $.atom),
+            field('default', $.object),
+            field('bindings', $.bindings),
+            field('body', repeat($._expression)),
+          ),
+        ),
+      ),
+
+    // (bind SRC BINDINGS BODY...)
+    bind: ($) =>
+      prec(
+        PREC.SPECIAL_FORM,
+        withParens(
+          seq('bind', field('src', $.reference), field('bindings', $.bindings), field('body', repeat($._expression))),
+        ),
+      ),
+
+    // (resume BINDINGS BODY...)
+    resume: ($) =>
+      prec(
+        PREC.SPECIAL_FORM,
+        withParens(seq('resume', field('bindings', $.bindings), field('body', repeat($._expression)))),
+      ),
+
+    // (emit-event CAPABILITY)
+    // eg (emit-event (TRANSFER "" account balance))
+    emit_event: ($) => prec(PREC.SPECIAL_FORM, withParens(seq('emit-event', field('capability', $._expression)))),
   },
 });

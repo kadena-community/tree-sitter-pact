@@ -1,0 +1,65 @@
+==================
+List Literal
+==================
+
+[1, 2, 3]
+
+---
+
+(source_file
+  (list
+    (integer)
+    (integer)
+    (integer)))
+
+==================
+Object Literal
+==================
+
+{ "name": "John", "age": 30 }
+
+---
+
+(source_file
+  (object
+    (pair
+      key: (property_identifier)
+      value: (string))
+    (pair
+      key: (property_identifier)
+      value: (integer))))
+
+==================
+Symbol Literal
+==================
+
+'my-symbol
+
+---
+
+(source_file
+  (symbol))
+
+==================
+Pact Version
+==================
+
+(pact-version "1.0")
+
+---
+
+(source_file
+  (pact_version
+    version: (string)))
+
+==================
+Namespace
+==================
+
+(namespace 'my-namespace)
+
+---
+
+(source_file
+  (namespace
+    (symbol)))

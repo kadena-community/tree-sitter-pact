@@ -1,0 +1,146 @@
+==================
+Defconst
+==================
+
+(defconst MY-CONST 1)
+
+---
+
+(source_file
+  (defconst
+    name: (def_identifier)
+    body: (integer)))
+
+==================
+Defschema
+==================
+(module test G
+  (defschema my-schema
+    name:string
+    age:integer
+  )
+)
+---
+
+(source_file
+  (module
+    name: (module_identifier)
+    governance: (module_governance)
+    body: (defschema
+      name: (def_identifier)
+      fields: (schema_field_list
+        (schema_field
+          name: (schema_field_identifier)
+          type: (type_annotation
+            (type_identifier)))
+        (schema_field
+          name: (schema_field_identifier)
+          type: (type_annotation
+            (type_identifier)))))))
+
+==================
+Deftable
+==================
+(module test G
+  (deftable my-table:{my-schema})
+)
+
+---
+
+(source_file
+  (module
+    name: (module_identifier)
+    governance: (module_governance)
+    body: (deftable
+      name: (def_identifier)
+      schema: (table_schema))))
+
+==================
+Deftable with Schema
+==================
+(module test G
+  (deftable my-table:{my-schema})
+)
+---
+
+(source_file
+  (module
+    name: (module_identifier)
+    governance: (module_governance)
+    body: (deftable
+      name: (def_identifier)
+      schema: (table_schema))))
+
+==================
+Defpact
+==================
+
+(defpact my-pact (name)
+  (step
+    (let ((greeting "hello"))
+      (print greeting name)
+    )
+  )
+  (step-with-rollback
+    (let ((farewell "goodbye"))
+      (print farewell name)
+    )
+    (let ((farewell "goodbye cruel world"))
+      (print farewell name)
+    )
+  )
+)
+
+---
+
+(source_file
+  (s_expression
+    head: (s_expression_head
+      (atom))
+    tail: (reference
+      (atom))
+    tail: (s_expression
+      head: (s_expression_head
+        (atom)))
+    tail: (s_expression
+      head: (s_expression_head
+        (atom))
+      tail: (let_binding
+        bind_pairs: (let_bind_pair
+          (let_variable
+            name: (let_variable_identifier))
+          value: (string))
+        body: (s_expression
+          head: (s_expression_head
+            (atom))
+          tail: (reference
+            (atom))
+          tail: (reference
+            (atom)))))
+    tail: (s_expression
+      head: (s_expression_head
+        (atom))
+      tail: (let_binding
+        bind_pairs: (let_bind_pair
+          (let_variable
+            name: (let_variable_identifier))
+          value: (string))
+        body: (s_expression
+          head: (s_expression_head
+            (atom))
+          tail: (reference
+            (atom))
+          tail: (reference
+            (atom))))
+      tail: (let_binding
+        bind_pairs: (let_bind_pair
+          (let_variable
+            name: (let_variable_identifier))
+          value: (string))
+        body: (s_expression
+          head: (s_expression_head
+            (atom))
+          tail: (reference
+            (atom))
+          tail: (reference
+            (atom)))))))
